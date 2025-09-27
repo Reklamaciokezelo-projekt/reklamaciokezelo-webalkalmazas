@@ -1,4 +1,31 @@
-h1 {
-    font-size: 20px;
-    color: blue;
+body {
+    background-color: #f0f0f5;
+}
+
+.navbar-brand {
+    color: #cce0ff;
+    font-size: 1.6rem;
+    margin-left: 10px;
+}
+
+.nav-link {
+    color: #cce0ff;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    margin-left: 20px;
+}
+
+.d-flex button {
+    color:#f0f0f5;;
+    border-color: #f0f0f5;;
+}
+
+form {
+    width: 600px;
+}
+
+.form-group {
+    margin-bottom: 15px;
 }
