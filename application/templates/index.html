@@ -1,12 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./../static/style.css" />
-    <title>Teszt</title>
-</head>
-<body>
-    <h1>Ez egy teszt</h1>
-</body>
+<html lang="hu">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./../static/style.css" />
+        <title>Reklamációkezelő</title>
+    </head>
+    <body>
+
+        <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('home') }}"><b>DGA</b></a> <!--logo-->
+
+                <!-- Hamburger menü-->
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Menüpontok -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">Reklamáció felvétele</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Kimutatások</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Regisztráció/Bejelentkezés gombok -->
+                <div class="d-flex">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('account') }}" class="btn btn-outline-secondary">Felhasználói fiók</a>
+                        <a href="{{ url_for('logout') }}" class="btn btn-secondary ms-3">Kijelentkezés</a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">Regisztráció</a>
+                        <a href="{{ url_for('login') }}" class="btn btn-secondary ms-3">Bejelentkezés</a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- Tartalom betöltése -->
+        <div class="container">
+
+            <!-- Flash üzenetet jelenít meg, amelyiket kell(category) -->
+            <div class="col-md-8 mt-3">
+                {% with messages = get_flashed_messages(with_categories = true) %}
+                    {% if messages%}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">    
+                                {{ message }}           
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            {% block content %}
+            {% endblock content %}
+
+        </div>
+
+        <!-- Bootstrap script link -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    </body>
 </html>
