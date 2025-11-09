@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<div class="container mt-4 text-center">
+  <h3>Biztosan törölni szeretnéd a fiókodat?</h3>
+  <p class="text-danger">Ez a művelet nem visszavonható!</p>
+
+  <form method="POST" class="mt-4 col-md-6 offset-md-3 text-start">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group mb-3">
+      {{ form.password.label(class="form-label") }}
+      {{ form.password(class="form-control") }}
+    </div>
+
+    <div class="d-flex justify-content-center gap-3">
+      {{ form.confirm(class="btn btn-danger") }}
+      {{ form.cancel(class="btn btn-outline-secondary") }}
+    </div>
+  </form>
+</div>
+
+{% endblock content %}
+
