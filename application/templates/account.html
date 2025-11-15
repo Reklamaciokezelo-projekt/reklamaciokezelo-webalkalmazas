@@ -8,7 +8,7 @@
     {{ form.hidden_tag() }}
 
     <div class="form-group mb-3">
-      {{ form.username.label(class="form-label") }}
+      {{ form.username.label(class="form-label") }} <!--nem kell, helyette a teljes név, felhasználónév, emailcím látható--> 
       {{ form.username(class="form-control") }}
     </div>
 
@@ -16,7 +16,7 @@
       {{ form.submit(class="btn btn-secondary") }}
       {{ form.cancel(class="btn btn-outline-secondary") }}
       <a href="{{ url_for('change_password') }}" class="btn btn-warning ms-auto">Jelszó módosítása</a>
-      <a href="{{ url_for('delete_account') }}" class="btn btn-danger">Fiók törlése</a>
+      <a href="{{ url_for('delete_account') }}" class="btn btn-danger">Fiók törlése</a> <!--TODO: nem kell-->
     </div>
   </form>
 </div>

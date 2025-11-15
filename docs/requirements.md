@@ -9,11 +9,11 @@ Ez a dokumentum tartalmazza a rendszerrel kapcsolatos követelményeket.
 ## 2. Funkcionális követelmények
 A rendszernek biztosítania kell az alábbi funkciókat:
 
-- **Regisztráció** - a felhasználó tud új fiókot létrehozni.**OK**
+- **Regisztráció** - az adminisztrátor tud új fiókot létrehozni egy új felhasználónak.
 - **Bejelentkezés** - a felhasználó a regisztrált adataival be tud lépni.**OK** 
-- **Felhasználói adatok módosítása** - a bejelentkezett felhasználó tudja módosítani az adatait.**OK**
+- **Felhasználói adatok módosítása** - az adminisztrátor tudja módosítani a regisztrált felhasználó adatait.
 - **Elfelejtett felhasználónév, vagy jelszó** - A felhasználó tudjon segítséget kérni bejelentkezési probléma esetén az adminisztrátoltól.
-- **Felhasználói fiók törlése** - az adminisztrátor tudja törölni a felhasználó fiókját.**OK**
+- **Felhasználói fiók törlése** - az adminisztrátor tudja törölni a felhasználó fiókját.
 - **Adatkezelés** - a  bejelentkezett felhasználó tud adatokat rögzíteni, módosítani és törölni.  
 - **Keresés** - a felhasználó tudjon adatokat keresni különböző feltételek alapján.  
 - **Kimutatás készítés** - a felhasználó tudjon kimutatást készíteni a választott feltételek alapján.
