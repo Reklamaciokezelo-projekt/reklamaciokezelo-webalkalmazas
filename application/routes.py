@@ -21,7 +21,6 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash("A fiók elkészült, Jelentkezz be")
-        print(user.query.all()) # csak ellenőrzésre, kiírja a létrehozott usereket
         return redirect(url_for('home'))
     return render_template('register.html', title="Felhasználói fiók létrehozása", form=form)
 
