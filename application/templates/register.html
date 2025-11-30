@@ -9,15 +9,57 @@
             <fieldset class="form-group"> <!-- Beviteli mezők -->
 
                 <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / vezetéknév -->
-                    {{ form.username.label(class="form-control-label") }} <!-- Label, ahol a forms label megjelenik -->
-                    {% if form.username.errors %} <!-- if else. azt vizsgálja, hogy az oldal hibaüzenettel töltődik-e be -->
-                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                    {{ form.surname.label(class="form-control-label") }} <!-- Label, ahol a forms label megjelenik -->
+                    {% if form.surname.errors %} <!-- if else. azt vizsgálja, hogy az oldal hibaüzenettel töltődik-e be -->
+                        {{ form.surname(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
-                            {% for error in form.username.errors %} <!-- for ciklus, ha több fajta hibaüzenet van -->
+                            {% for error in form.surname.errors %} <!-- for ciklus, ha több fajta hibaüzenet van -->
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %} <!-- Ha minden ok, ez töltődik be -->
+                        {{ form.surname(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / keresztnév -->
+                    {{ form.forename.label(class="form-control-label") }} 
+                    {% if form.forename.errors %} 
+                        {{ form.forename(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.forename.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %} 
+                        {{ form.forename(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / beosztás -->
+                    {{ form.rank.label(class="form-control-label") }} 
+                    {% if form.rank.errors %} 
+                        {{ form.rank(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.rank.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.rank(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / felhasználónév -->
+                    {{ form.username.label(class="form-control-label") }} 
+                    {% if form.username.errors %} 
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %} 
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %} 
                         {{ form.username(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>

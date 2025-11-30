@@ -1,7 +1,30 @@
 {% extends 'index.html' %}
-
 {% block content %}
 
-    <h2>{{ current_user.username }}</h2>
+<div class="container mt-4">
+
+    <h2 class="text-center mb-4">Fiók adatok</h2>
+
+    <div class="card p-3 account-card">
+        <div class="mb-2 account-text">
+            <strong>Teljes név:</strong> {{ current_user.surname }} {{ current_user.forename}}
+        </div>
+        <div class="mb-2 account-text">
+            <strong>Beosztás:</strong> {{ current_user.rank }}
+        </div>
+        <div class="mb-2 account-text">
+            <strong>Felhasználónév:</strong> {{ current_user.username }}
+        </div>
+        <div class="mb-2 account-text">
+            <strong>E-mail:</strong> {{ current_user.email }}
+        </div>
+    </div>
+
+    <div class="account-button-wrapper">
+        <a href="{{ url_for('change_password') }}" class="btn btn-warning">Jelszó módosítás</a>
+        <a href="{{ url_for('delete_account') }}" class="btn btn-danger">Fiók törlése</a>
+    </div>
+
+</div>
 
 {% endblock content %}
