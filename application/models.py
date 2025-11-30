@@ -10,10 +10,13 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users' # táblanév
 
     id = db.Column(db.Integer, primary_key=True)
+    surname = db.Column(db.String(50), nullable=False)
+    forename = db.Column(db.String(50), nullable=False)
+    rank = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
 
+    # Az adott osztály reprezentációja
     def __repr__(self):
         return f"User ({self.username}, {self.email})"
-    # Az adott osztály reprezentációja
