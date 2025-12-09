@@ -20,6 +20,6 @@ login_manager.login_view = 'login'
 # betölti a route-okat, hogy a Flask tudja, milyen URL-eket kezeljen
 from application import routes
 
-# Az app_context aktiválja a Flask alkalmazást, így a SQLAlchemy hozzáfér a konfigurációhoz és létre tudja hozni a táblákat
+# Adatbázis-táblák létrehozása
 with app.app_context():
     db.create_all()
