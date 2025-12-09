@@ -1,34 +1,39 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from application.models import User
 
 
-# Új felhasználó
+# ----------------------------------------------------------------------
+# ÚJ FELHASZNÁLÓ LÉTREHOZÁSA ŰRLAP
+# ----------------------------------------------------------------------
 class NewUserForm(FlaskForm):
     surname = StringField('Vezetéknév', validators=[DataRequired(), Length(min=2,max=50)])
     forename = StringField('Keresztnév', validators=[DataRequired(), Length(min=2,max=50)])
-    rank = StringField('Beosztás', validators=[DataRequired(), Length(min=2,max=30)])
+    position = StringField('Beosztás', validators=[DataRequired(), Length(min=2,max=30)])
     username = StringField('Felhasználónév', validators=[DataRequired(), Length(min=2,max=20)])
     email = StringField('E-mail cím', validators=[DataRequired(), Email(message="A megadott email cím formailag nem megfelelő")])
     password = PasswordField('Jelszó', validators=[DataRequired()])
     confirm_password = PasswordField('Jelszó még egyszer', validators=[DataRequired(), EqualTo('password', message="Nem egyezik a fent megadott jelszóval")])
+    role = SelectField('Felhasználói szint', choices=[('user1', 'Alap felhasználó'), ('user2', 'Haladó felhasználó')], default='user1', validators=[DataRequired()])
     submit = SubmitField('Mentés')
 
-    # ez a metódus ellenőrzi, hogy van-e már ilyen felhasználónév
+    # Felhasználónév validálása, létezik-e már ilyen felhasználónév
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError("Ez a felhasználónév már foglalt, adjon meg másikat")
         
-    # ez a metódus ellenőrzi, hogy foglalt-e már a megadott mail cím
+    # Email validálása, létezik-e már ilyen felhasználónév
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError("Ez az email cím már foglalt, adjon meg másikat")
         
 
-# Bejelentkezés
+# ----------------------------------------------------------------------
+# BEJELENTKEZÉS ŰRLAP
+# ----------------------------------------------------------------------
 class LoginForm(FlaskForm):
     email = StringField('E-mail', validators=[DataRequired()])
     password = PasswordField('Jelszó', validators=[DataRequired()])
@@ -36,25 +41,35 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Bejelentkezés')
 
 
-# Felhasználói adatok módosítása (név, felhasználónév, email) Az Admin felülethez kell igazítani
-class UpdateAccountForm(FlaskForm):
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI ADATOK MÓDOSÍTÁSA ŰRLAP (Admin)
+# ----------------------------------------------------------------------
+class UpdateUserData(FlaskForm):
     surname = StringField('Vezetéknév', validators=[DataRequired(), Length(min=2,max=50)])
     forename = StringField('Keresztnév', validators=[DataRequired(), Length(min=2,max=50)])
-    rank = StringField('Beosztás', validators=[DataRequired(), Length(min=2,max=30)])
+    position = StringField('Beosztás', validators=[DataRequired(), Length(min=2,max=30)])
     username = StringField('Felhasználónév', validators=[DataRequired(), Length(min=2,max=20)])
+    email = StringField('E-mail', validators=[DataRequired(), Length(min=2,max=30)])
+    role = SelectField('Felhasználói szint', choices=[('user1', 'Alap felhasználó'), ('user2', 'Haladó felhasználó')], default='user1', validators=[DataRequired()])
     submit = SubmitField('Változtatások mentése')
     cancel = SubmitField('Mégse')
 
-    # ez a metódus ellenőrzi, hogy van-e már ilyen felhasználónév
+    # Felhasználónév validálása, létezik-e már ilyen felhasználónév
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user and user.id != self.original_user.id:
             raise ValidationError("Ez a felhasználónév már foglalt, adjon meg másikat")
         
-    # ez a metódus ellenőrzi, hogy van-e már ilyen email
+    # Email validálása, létezik-e már ilyen felhasználónév
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user and user.id != self.original_user.id:
+            raise ValidationError("Ez az email cím már használatban van.")
 
 
-# Felhasználói jelszó módosítása
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI JELSZÓ MÓDOSÍTÁSA ŰRLAP
+# ----------------------------------------------------------------------
 class ChangePasswordForm(FlaskForm):
     current_password = PasswordField('Jelenlegi jelszó', validators=[DataRequired()])
     new_password = PasswordField('Új jelszó', validators=[DataRequired()])
@@ -62,7 +77,9 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField('Mentés')
 
 
-# Felhasználói fiók törlése
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI FIÓK TÖRLÉSE ŰRLAP (Admin)
+# ----------------------------------------------------------------------
 class DeleteAccountForm(FlaskForm):
     confirm = SubmitField('Fiók törlése')
     cancel = SubmitField('Mégse')
