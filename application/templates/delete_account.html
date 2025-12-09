@@ -5,6 +5,8 @@
     <h3>Biztosan törölni szeretnéd a fiókot?</h3>
     <p class="text-danger">Ez a művelet nem visszavonható!</p>
 
+    <p><strong>{{ user.surname }} {{ user.forename }}</strong> {{ user.username }}</p>
+
     <form method="POST" class="mt-4 col-md-6 offset-md-3 text-start">
         {{ form.hidden_tag() }}
 

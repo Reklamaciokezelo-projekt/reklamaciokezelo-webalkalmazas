@@ -2,77 +2,120 @@ from flask import render_template, redirect, url_for, request, flash, abort
 from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User
-from application.forms import NewUserForm, LoginForm, UpdateAccountForm, DeleteAccountForm, ChangePasswordForm
+from application.forms import NewUserForm, LoginForm, UpdateUserData, DeleteAccountForm, ChangePasswordForm
 
 
+# ----------------------------------------------------------------------
+# FŐOLDAL
+# ----------------------------------------------------------------------
 @app.route('/')
 @app.route('/home')
 def home():
     return render_template('index.html', title='Főoldal')
 
 
-# Regisztráció / Adminhoz adni, igazítani
+# ----------------------------------------------------------------------
+# REGISZTRÁCIÓ (admin)
+# – új felhasználó létrehozása 
+# ----------------------------------------------------------------------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = NewUserForm() # forms.py-ból meghívom az osztálykonstruktort
-    if form.validate_on_submit(): # ha POST metódussal érkezünk
+    form = NewUserForm()
+
+    # POST esetén a bejövő form adatok érvényesítése (WTForms)
+    if form.validate_on_submit():
+
+        # A jelszó bcrypt-tel történő hash-elése
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(surname=form.surname.data, forename=form.forename.data, rank=form.rank.data, username=form.username.data, email=form.email.data, password=hashed_password)
+
+        # Új User példány létrehozása
+        user = User(surname=form.surname.data,
+                    forename=form.forename.data, 
+                    position=form.position.data,
+                    username=form.username.data, 
+                    email=form.email.data,
+                    password=hashed_password, 
+                    role=form.role.data)
+        
+        # Adatbázis műveletek (INSERT)
         db.session.add(user)
         db.session.commit()
         flash("A fiók elkészült, Jelentkezz be")
-        print(user.query.all()) # csak ellenőrzésre, kiírja a létrehozott usereket
         return redirect(url_for('home'))
     return render_template('register.html', title="Felhasználói fiók létrehozása", form=form)
 
 
-# Bejelentkezés
+# ----------------------------------------------------------------------
+# BEJELENTKEZÉS 
+# – felhasználó autentikáció (Flask-Login)
+# ----------------------------------------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated: # ha a felhasználó be van jelentkezve és a login url-re navigál, a rendszer átirányítja a home-ra
+
+    # Ha már hitelesített user érkezik, ne engedje újra a login oldalt.
+    if current_user.is_authenticated:
         return redirect(url_for('home'))
+    
     form = LoginForm()
+
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first() # a megadott adat alapján kiolvasás az adatbázisból
+        # Felhasználó lekérése email alapján
+        user = User.query.filter_by(email=form.email.data).first()
+
+        # Jelszó ellenőrzés bcrypt-tel
         if user and bcrypt.check_password_hash(user.password, form.password.data): # beírt jelszó és tárolt jelszó összehasonlítása
             login_user(user, remember=form.remember.data)
-            #next_page = redirect.args.get('next')
-            #return redirect(next_page) if next_page else redirect(url_for('account'))
+            # Sikeres autentikáció → felhasználói fiók oldalra
             return redirect(url_for('account'))
         else:
             flash("Sikertelen bejelentkezés. Hibás felhasználónév vagy jelszó", 'danger')
     return render_template('login.html', title='Bejelentkezés', form=form)
 
 
-# Kijelentkezés
+# ----------------------------------------------------------------------
+# KIJELENTKEZÉS
+# ----------------------------------------------------------------------
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
 
-# Felhasználói fiók
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI FIÓK 
+# – saját profilnézet (autentikációhoz kötött)
+# ----------------------------------------------------------------------
 @app.route('/account', methods=["GET", "POST"])
 @login_required
 def account():
         return render_template('account.html', title='Felhasználói fiók')
 
-# Profiles lap az admin dashboard
-@app.route("/profiles")
+
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓK KEZELÉSE (Admin) 
+# – összes felhasználó megjelenítése
+# ----------------------------------------------------------------------
+@app.route("/users")
 @login_required
 def profiles():
     users = User.query.all()
-    return render_template('profiles.html', title='Felhasználók', users=users)
+    return render_template('users.html', title='Felhasználók', users=users)
 
-# Jelszó módosítás
+
+# ----------------------------------------------------------------------
+# JELSZÓ MÓDOSÍTÁS 
+# – jelenlegi jelszó kötelező hitelesítése (bcrypt check)
+# ----------------------------------------------------------------------
 @app.route("/change_password", methods=["GET", "POST"])
 @login_required
 def change_password():
     form = ChangePasswordForm()
 
-    # validáció és módosítás
     if form.validate_on_submit():
+
+        # Jelenlegi jelszó validálása
         if bcrypt.check_password_hash(current_user.password, form.current_password.data):
+            # Új jelszó generálása és mentése
             hashed_pw = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
             current_user.password = hashed_pw
             db.session.commit()
@@ -84,26 +127,75 @@ def change_password():
     return render_template('change_password.html', form=form)
 
 
-# Felhasználói fiók törlése
-@app.route("/delete_account", methods=["GET", "POST"])
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓ ADATAINAK MODOSÍTÁSA (Admin funkció)
+# - Kiolvasás user_id alapján
+# ----------------------------------------------------------------------
+@app.route("/update_user/<int:user_id>", methods=["GET", "POST"])
 @login_required
-def delete_account():
-    form = DeleteAccountForm()
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    form = UpdateUserData()
+
+    # Az eredeti user elmentése a form validáláshoz
+    form.original_user = user
 
     if form.validate_on_submit():
-        # Ha a felhasználó megszakítja
+
+        # Megszakítás esetén vissza a listára
+        if form.cancel.data:
+            flash("A módosítás megszakítva.", "secondary")
+            return redirect(url_for('profiles'))
+
+        # Adatok frissítése (UPDATE)
+        user.surname = form.surname.data
+        user.forename = form.forename.data
+        user.position = form.position.data
+        user.username = form.username.data
+        user.email = form.email.data
+        user.role = form.role.data
+
+        db.session.commit()
+        flash("A felhasználó adatai frissítve!", "success")
+        return redirect(url_for('profiles'))
+
+    # GET kérés → form mezők feltöltése meglévő adatokkal
+    form.surname.data = user.surname
+    form.forename.data = user.forename
+    form.position.data = user.position
+    form.username.data = user.username
+    form.email.data = user.email
+    form.role.data = user.role
+
+    return render_template("update_user.html", form=form, user=user)
+
+
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI FIÓK TÖRLÉSE
+# - user_id alapján
+# - Two-step confirmation (WTForms)
+# - A törlés végleges
+# ----------------------------------------------------------------------
+@app.route("/delete_account/<int:user_id>", methods=["GET", "POST"])
+@login_required
+def delete_account(user_id):
+    form = DeleteAccountForm()
+
+    # Ha a user nem létezik: 404
+    user = User.query.get_or_404(user_id)
+
+    if form.validate_on_submit():
+        
+        # Művelet megszakítása
         if form.cancel.data:
             flash("A fiók törlése megszakítva.", "secondary")
-            return redirect(url_for('account'))
+            return redirect(url_for('profiles'))
         
-        # Fiók törlése
+        # Törlés (DELETE FROM users WHERE id = ...)
         if form.confirm.data:
-            user_id = current_user.id
-            logout_user()
-            user = User.query.get(user_id)
             db.session.delete(user)
             db.session.commit()
             flash("A fiók sikeresen törölve.", "info")
-            return redirect(url_for('home'))
+            return redirect(url_for('profiles'))
 
-    return render_template('delete_account.html', form=form)
+    return render_template('delete_account.html', form=form, user=user)

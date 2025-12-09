@@ -61,19 +61,20 @@ div.dataTables_filter {
     margin-bottom: 15px;
 }
 
-.custom-add-btn {
-    background-color: #e9ecef;
-    color: #000;
-    font-size: 1.05rem;
+.add-user-btn {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     padding: 10px 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    transition: background-color .5s, box-shadow .5s;
-    border: 1px solid gray;
+    font-size: 1.1rem;
 }
 
-.custom-add-btn:hover {
-    background-color: #dee2e6;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-    text-decoration: none;
+.dataTables_wrapper .dataTables_info {
+    margin-top: 20px;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 20px;
+}
+
+.dataTables_wrapper {
+    margin-bottom: 20px;
 }

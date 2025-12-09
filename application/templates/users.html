@@ -5,7 +5,9 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Regisztrált felhasználók</h3>
-            <a href="#" class="btn custom-add-btn">+ Felhasználó hozzáadása</a>
+            <!--<a href="#" class="btn custom-add-btn">+ Felhasználó hozzáadása</a>-->
+            <!-- <button type="button" class="btn btn-secondary btn-lg add-user-btn">+ Felhasználó hozzáadása</button> -->
+            <a href="{{ url_for('register') }}" class="btn btn-secondary add-user-btn">+ Felhasználó hozzáadása</a>
         </div>
 
         <table id="usersTable" class="display responsive nowrap" style="width:100%">
@@ -17,6 +19,8 @@
                     <th>Beosztás</th>
                     <th>Felhasználónév</th>
                     <th>Email</th>
+                    <th>Felhasználói szint</th>
+                    <th>Műveletek</th>
                 </tr>
             </thead>
 
@@ -26,9 +30,14 @@
                     <td>{{ u.id }}</td>
                     <td>{{ u.surname }}</td>
                     <td>{{ u.forename }}</td>
-                    <td>{{ u.rank }}</td>
+                    <td>{{ u.position }}</td>
                     <td>{{ u.username }}</td>
                     <td>{{ u.email }}</td>
+                    <td>{{ u.role }}</td>
+                    <td>
+                        <a href="{{ url_for('update_user', user_id=u.id) }}" class="btn btn-sm btn-primary ms-3">Módosítás</a>
+                        <a href="{{ url_for('delete_account', user_id=u.id) }}" class="btn btn-sm btn-danger ms-3">Törlés</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -42,8 +51,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script> -->
+    <script src="https://cdn.datatables.net/2.3.5/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.7/js/dataTables.responsive.min.js"></script>
+
 
     <!-- DataTables inicializálása. -->
     <script>

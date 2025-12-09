@@ -18,11 +18,13 @@
         <div class="mb-2 account-text">
             <strong>E-mail:</strong> {{ current_user.email }}
         </div>
+        <div class="mb-2 account-text">
+            <strong>Felhasználói szint:</strong> {{ current_user.role }}
+        </div>
     </div>
 
     <div class="account-button-wrapper">
         <a href="{{ url_for('change_password') }}" class="btn btn-warning">Jelszó módosítás</a>
-        <a href="{{ url_for('delete_account') }}" class="btn btn-danger">Fiók törlése</a>
     </div>
 
 </div>
