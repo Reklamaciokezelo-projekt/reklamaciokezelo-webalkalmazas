@@ -5,8 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"> -->
         <link rel="stylesheet" href="https://cdn.datatables.net/2.3.5/css/dataTables.dataTables.min.css">
         <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.7/css/responsive.dataTables.min.css">
 
@@ -34,7 +32,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Menüpontok  EZEK NEM KELLENEK-->
+                <!-- Admin. Felhasználó hozzáadása -->
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
@@ -42,6 +41,7 @@
                         </li>
                     </ul>
                 </div>
+                {% endif %}
 
                 <!-- Regisztráció/Bejelentkezés gombok -->
                 <div class="d-flex">
@@ -49,7 +49,7 @@
                         <a href="{{ url_for('account') }}" class="btn btn-outline-secondary">Felhasználói fiók</a>
                         <a href="{{ url_for('logout') }}" class="btn btn-secondary ms-3">Kijelentkezés</a>
                     {% else %}
-                        <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">Regisztráció</a> <!-- Nem kell -->
+                        <!-- <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">Regisztráció</a> -->
                         <a href="{{ url_for('login') }}" class="btn btn-secondary ms-3">Bejelentkezés</a>
                     {% endif %}
                 </div>

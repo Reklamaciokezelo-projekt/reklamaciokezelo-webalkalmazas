@@ -5,8 +5,6 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Regisztrált felhasználók</h3>
-            <!--<a href="#" class="btn custom-add-btn">+ Felhasználó hozzáadása</a>-->
-            <!-- <button type="button" class="btn btn-secondary btn-lg add-user-btn">+ Felhasználó hozzáadása</button> -->
             <a href="{{ url_for('register') }}" class="btn btn-secondary add-user-btn">+ Felhasználó hozzáadása</a>
         </div>
 
@@ -35,8 +33,8 @@
                     <td>{{ u.email }}</td>
                     <td>{{ u.role }}</td>
                     <td>
-                        <a href="{{ url_for('update_user', user_id=u.id) }}" class="btn btn-sm btn-primary ms-3">Módosítás</a>
-                        <a href="{{ url_for('delete_account', user_id=u.id) }}" class="btn btn-sm btn-danger ms-3">Törlés</a>
+                        <a href="{{ url_for('update_user', user_id=u.id) }}" class="btn btn-sm btn-primary ms-2">Módosítás</a>
+                        <a href="{{ url_for('delete_account', user_id=u.id) }}" class="btn btn-sm btn-danger ms-2">Törlés</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -51,8 +49,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- DataTables JS -->
-    <!-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script> -->
     <script src="https://cdn.datatables.net/2.3.5/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/3.0.7/js/dataTables.responsive.min.js"></script>
 
