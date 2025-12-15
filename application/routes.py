@@ -1,8 +1,9 @@
-from flask import render_template, redirect, url_for, request, flash, abort
+from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User
 from application.forms import NewUserForm, LoginForm, UpdateUserData, DeleteAccountForm, ChangePasswordForm
+from application.decorators import roles_required
 
 
 # ----------------------------------------------------------------------
@@ -19,6 +20,8 @@ def home():
 # – új felhasználó létrehozása 
 # ----------------------------------------------------------------------
 @app.route('/register', methods=['GET', 'POST'])
+@login_required
+@roles_required('admin')
 def register():
     form = NewUserForm()
 
@@ -76,6 +79,7 @@ def login():
 # KIJELENTKEZÉS
 # ----------------------------------------------------------------------
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
@@ -97,6 +101,7 @@ def account():
 # ----------------------------------------------------------------------
 @app.route("/users")
 @login_required
+@roles_required('admin')
 def profiles():
     users = User.query.all()
     return render_template('users.html', title='Felhasználók', users=users)
@@ -133,6 +138,7 @@ def change_password():
 # ----------------------------------------------------------------------
 @app.route("/update_user/<int:user_id>", methods=["GET", "POST"])
 @login_required
+@roles_required('admin')
 def update_user(user_id):
     user = User.query.get_or_404(user_id)
     form = UpdateUserData()
@@ -178,6 +184,7 @@ def update_user(user_id):
 # ----------------------------------------------------------------------
 @app.route("/delete_account/<int:user_id>", methods=["GET", "POST"])
 @login_required
+@roles_required('admin')
 def delete_account(user_id):
     form = DeleteAccountForm()
 
