@@ -15,7 +15,7 @@ class NewUserForm(FlaskForm):
     email = StringField('E-mail cím', validators=[DataRequired(), Email(message="A megadott email cím formailag nem megfelelő")])
     password = PasswordField('Jelszó', validators=[DataRequired()])
     confirm_password = PasswordField('Jelszó még egyszer', validators=[DataRequired(), EqualTo('password', message="Nem egyezik a fent megadott jelszóval")])
-    role = SelectField('Felhasználói szint', choices=[('user1', 'Alap felhasználó'), ('user2', 'Haladó felhasználó')], default='user1', validators=[DataRequired()])
+    role = SelectField('Felhasználói szint', choices=[('user1', 'Alap felhasználó'), ('user2', 'Haladó felhasználó'), ('admin', 'Adminisztrátor')], default='user1', validators=[DataRequired()])
     submit = SubmitField('Mentés')
 
     # Felhasználónév validálása, létezik-e már ilyen felhasználónév
