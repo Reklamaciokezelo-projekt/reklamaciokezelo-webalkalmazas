@@ -1,130 +1,129 @@
 {% extends 'index.html' %}
-
 {% block content %}
 
-    <br>
-        <h2 class="my-3">Felhasználói fiók létrehozása</h2> <!-- Cím -->
-        <form action="/register" method="POST" >
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+        <h2 class="text-center mb-4">Felhasználói fiók létrehozása</h2>
+
+        <form action="{{ url_for('register') }}" method="POST">
             {{ form.hidden_tag() }}
-            <fieldset class="form-group"> <!-- Beviteli mezők -->
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / vezetéknév -->
-                    {{ form.surname.label(class="form-control-label") }} <!-- Label, ahol a forms label megjelenik -->
-                    {% if form.surname.errors %} <!-- if else. azt vizsgálja, hogy az oldal hibaüzenettel töltődik-e be -->
-                        {{ form.surname(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.surname.errors %} <!-- for ciklus, ha több fajta hibaüzenet van -->
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %} <!-- Ha minden ok, ez töltődik be -->
-                        {{ form.surname(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Vezetéknév -->
+            <div class="mb-3">
+                {{ form.surname.label(class="form-label") }}
+                {% if form.surname.errors %}
+                    {{ form.surname(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.surname.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.surname(class="form-control") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / keresztnév -->
-                    {{ form.forename.label(class="form-control-label") }} 
-                    {% if form.forename.errors %} 
-                        {{ form.forename(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.forename.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %} 
-                        {{ form.forename(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Keresztnév -->
+            <div class="mb-3">
+                {{ form.forename.label(class="form-label") }}
+                {% if form.forename.errors %}
+                    {{ form.forename(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.forename.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.forename(class="form-control") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / beosztás -->
-                    {{ form.position.label(class="form-control-label") }} 
-                    {% if form.position.errors %} 
-                        {{ form.position(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.position.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.position(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Beosztás -->
+            <div class="mb-3">
+                {{ form.position.label(class="form-label") }}
+                {% if form.position.errors %}
+                    {{ form.position(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.position.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.position(class="form-control") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / felhasználónév -->
-                    {{ form.username.label(class="form-control-label") }} 
-                    {% if form.username.errors %} 
-                        {{ form.username(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.username.errors %} 
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %} 
-                        {{ form.username(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Felhasználónév -->
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {% if form.username.errors %}
+                    {{ form.username(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.username(class="form-control") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / email -->
-                    {{ form.email.label(class="form-control-label") }}
-                    {% if form.email.errors %}
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Email -->
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {% if form.email.errors %}
+                    {{ form.email(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.email(class="form-control") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / role -->
-                    {{ form.role.label(class="form-control-label") }}
-                    {% if form.role.errors %}
-                        {{ form.role(class="form-select form-select-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.role.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.role(class="form-select form-select-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Szerepkör -->
+            <div class="mb-3">
+                {{ form.role.label(class="form-label") }}
+                {% if form.role.errors %}
+                    {{ form.role(class="form-select is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.role.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.role(class="form-select") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / password -->
-                    {{ form.password.label(class="form-control-label") }}
-                    {% if form.password.errors %}
-                        {{ form.password(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.password(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Jelszó -->
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {% if form.password.errors %}
+                    {{ form.password(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.password(class="form-control") }}
+                {% endif %}
+            </div>
 
-                <div class="form-group"> <!-- forms.py NewUserForm osztály attribútuma / confirm password -->
-                    {{ form.confirm_password.label(class="form-control-label") }}
-                    {% if form.confirm_password.errors %}
-                        {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.confirm_password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.confirm_password(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
+            <!-- Jelszó megerősítés -->
+            <div class="mb-4">
+                {{ form.confirm_password.label(class="form-label") }}
+                {% if form.confirm_password.errors %}
+                    {{ form.confirm_password(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.confirm_password(class="form-control") }}
+                {% endif %}
+            </div>
 
-                
+            <!-- Gombok -->
+            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+                {{ form.submit(class="btn btn-secondary px-4") }}
+                <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4">
+                    Mégse
+                </a>
+            </div>
 
-            </fieldset>
-            <div class="form-group">{{ form.submit(class="btn btn-secondary") }}</div> <!-- Submit gomb -->
         </form>
 
+    </div>
+</div>
 
 {% endblock content %}

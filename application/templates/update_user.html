@@ -1,46 +1,56 @@
 {% extends 'index.html' %}
 {% block content %}
 
-<div class="container mt-4 col-md-6">
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
 
-    <h3 class="mb-3 text-center">
-        Felhasználó adatainak módosítása
-    </h3>
+        <h3 class="mb-4 text-center">
+            Felhasználó adatainak módosítása
+        </h3>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
-        <div class="mb-3">
-            {{ form.surname.label }} 
-            {{ form.surname(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.forename.label }} 
-            {{ form.forename(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.position.label }} 
-            {{ form.position(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.username.label }} 
-            {{ form.username(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.email.label }}
-            {{ form.email(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.role.label }}
-            {{ form.role(class="form-select") }}
-        </div>
+            <div class="mb-3">
+                {{ form.surname.label(class="form-label") }}
+                {{ form.surname(class="form-control") }}
+            </div>
 
-        <div class="d-flex justify-content-between mt-4">
-            {{ form.cancel(class="btn btn-outline-secondary") }}
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
+            <div class="mb-3">
+                {{ form.forename.label(class="form-label") }}
+                {{ form.forename(class="form-control") }}
+            </div>
 
-    </form>
+            <div class="mb-3">
+                {{ form.position.label(class="form-label") }}
+                {{ form.position(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
+            </div>
+
+            <div class="mb-4">
+                {{ form.role.label(class="form-label") }}
+                {{ form.role(class="form-select") }}
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+                {{ form.submit(class="btn btn-primary px-4") }}
+                <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4">
+                    Mégse
+                </a>
+            </div>
+
+        </form>
+
+    </div>
 </div>
 
 {% endblock content %}

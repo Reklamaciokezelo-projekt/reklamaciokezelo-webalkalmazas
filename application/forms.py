@@ -17,6 +17,7 @@ class NewUserForm(FlaskForm):
     confirm_password = PasswordField('Jelszó még egyszer', validators=[DataRequired(), EqualTo('password', message="Nem egyezik a fent megadott jelszóval")])
     role = SelectField('Felhasználói szint', choices=[('user1', 'Alap felhasználó'), ('user2', 'Haladó felhasználó'), ('admin', 'Adminisztrátor')], default='user1', validators=[DataRequired()])
     submit = SubmitField('Mentés')
+    cancel = SubmitField('Mégse')
 
     # Felhasználónév validálása, létezik-e már ilyen felhasználónév
     def validate_username(self, username):

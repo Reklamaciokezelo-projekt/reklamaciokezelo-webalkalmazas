@@ -1,21 +1,32 @@
 {% extends 'index.html' %}
 {% block content %}
 
-<div class="container mt-4 text-center">
-    <h3>Biztosan törölni szeretnéd a fiókot?</h3>
-    <p class="text-danger">Ez a művelet nem visszavonható!</p>
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 text-center">
 
-    <p><strong>{{ user.surname }} {{ user.forename }}</strong> {{ user.username }}</p>
+        <h3 class="mb-3">Biztosan törölni szeretnéd a fiókot?</h3>
+        <p class="text-danger fw-semibold">
+            Ez a művelet nem visszavonható!
+        </p>
 
-    <form method="POST" class="mt-4 col-md-6 offset-md-3 text-start">
-        {{ form.hidden_tag() }}
+        <p class="mb-4">
+            <strong>{{ user.surname }} {{ user.forename }}</strong>
+            <br>
+            <span class="text-muted">{{ user.username }}</span>
+        </p>
 
-        <div class="d-flex justify-content-center gap-3">
-            {{ form.confirm(class="btn btn-danger") }}
-            {{ form.cancel(class="btn btn-outline-secondary") }}
-        </div>
-    </form>
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
+            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+                {{ form.confirm(class="btn btn-danger px-4") }}
+                <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4">
+                    Mégse
+                </a>
+            </div>
+        </form>
+
+    </div>
 </div>
 
 {% endblock content %}
