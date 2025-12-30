@@ -8,22 +8,18 @@ body {
     margin-left: 10px;
 }
 
-.nav-link {
+/* .nav-link {
     color: #cce0ff;
 }
 
 .navbar-nav .nav-link {
     font-size: 1.2rem;
     margin-left: 20px;
-}
+} */
 
 .d-flex button {
     color:#f0f0f5;;
     border-color: #f0f0f5;;
-}
-
-form {
-    width: 600px;
 }
 
 .form-group {
@@ -77,4 +73,50 @@ div.dataTables_filter {
 
 .dataTables_wrapper {
     margin-bottom: 20px;
+}
+
+.date-badge {
+    display: flex;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: #343a40;
+    border: 1px solid #6c757d;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    font-size: 0.9rem;
+    color: #f8f9fa;
+}
+
+.date-badge span {
+    font-weight: 500;
+}
+
+#navbarSupportedContent > .d-flex {
+    margin-left: auto;
+    align-items: stretch;
+}
+
+#navbarSupportedContent .btn {
+    min-width: 180px;
+    text-align: center;
+}
+
+@media (min-width: 992px) {
+    #navbarSupportedContent > .d-flex {
+        align-items: center;
+    }
+
+    #navbarSupportedContent .btn {
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    #navbarSupportedContent .d-flex {
+        margin-top: 12px;
+    }
+}
+
+.form-control {
+    width: 100%;
 }

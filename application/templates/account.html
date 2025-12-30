@@ -1,30 +1,34 @@
 {% extends 'index.html' %}
 {% block content %}
 
-<div class="container mt-4">
+<div class="row justify-content-center mt-4">
 
-    <h2 class="text-center mb-4">Fiók adatok</h2>
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
 
-    <div class="card p-3 account-card">
-        <div class="mb-2 account-text">
-            <strong>Teljes név:</strong> {{ current_user.surname }} {{ current_user.forename}}
-        </div>
-        <div class="mb-2 account-text">
-            <strong>Beosztás:</strong> {{ current_user.position }}
-        </div>
-        <div class="mb-2 account-text">
-            <strong>Felhasználónév:</strong> {{ current_user.username }}
-        </div>
-        <div class="mb-2 account-text">
-            <strong>E-mail:</strong> {{ current_user.email }}
-        </div>
-        <div class="mb-2 account-text">
-            <strong>Felhasználói szint:</strong> {{ current_user.role }}
-        </div>
-    </div>
+        <h2 class="text-center mb-4">Fiók adatok</h2>
 
-    <div class="account-button-wrapper">
-        <a href="{{ url_for('change_password') }}" class="btn btn-warning">Jelszó módosítás</a>
+        <div class="card p-3 account-card">
+            <div class="mb-2 account-text">
+                <strong>Teljes név:</strong> {{ current_user.surname }} {{ current_user.forename}}
+            </div>
+            <div class="mb-2 account-text">
+                <strong>Beosztás:</strong> {{ current_user.position }}
+            </div>
+            <div class="mb-2 account-text">
+                <strong>Felhasználónév:</strong> {{ current_user.username }}
+            </div>
+            <div class="mb-2 account-text">
+                <strong>E-mail:</strong> {{ current_user.email }}
+            </div>
+            <div class="mb-2 account-text">
+                <strong>Felhasználói szint:</strong> {{ current_user.role }}
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('change_password') }}" class="btn btn-warning">Jelszó módosítás</a>
+        </div>
+
     </div>
 
 </div>

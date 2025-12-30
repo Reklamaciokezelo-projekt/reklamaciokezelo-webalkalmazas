@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu">
+
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,11 +15,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Reklamációkezelő</title>
     </head>
-    <body>
 
+    <body>
         <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+            
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('home') }}"><b>DGA</b></a> <!--logo-->
+                <a class="navbar-brand" href="{{ url_for('home') }}"><b>DGA</b></a>
+
+                <!-- Aktuális dátum -->
+                <div class="date-badge ms-4 d-flex align-items-center justify-content-center">
+                    <span class="date-year">{{ current_date.year }}</span>
+                    <span class="date-month">{{ current_date.month }}</span>
+                    <span class="date-day">{{ current_date.day }}</span>
+                </div>
 
                 <!-- Hamburger menü-->
                 <button
@@ -32,26 +41,23 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Admin. Felhasználó hozzáadása -->
-                {% if current_user.is_authenticated and current_user.role == 'admin' %}
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('profiles') }}">Felhasználók</a>
-                        </li>
-                    </ul>
-                </div>
-                {% endif %}
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">       
+                    <div class="d-flex flex-column flex-lg-row gap-2">
 
-                <!-- Regisztráció/Bejelentkezés gombok -->
-                <div class="d-flex">
-                    {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('account') }}" class="btn btn-outline-secondary">Felhasználói fiók</a>
-                        <a href="{{ url_for('logout') }}" class="btn btn-secondary ms-3">Kijelentkezés</a>
-                    {% else %}
-                        <!-- <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">Regisztráció</a> -->
-                        <a href="{{ url_for('login') }}" class="btn btn-secondary ms-3">Bejelentkezés</a>
-                    {% endif %}
+                        <!-- Felhasználó hozzáadása / admin-->
+                        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                            <a class="btn btn-secondary ms-1" href="{{ url_for('profiles') }}">Felhasználók</a>
+                        {% endif %}
+                        
+                        <!-- Felhasználói fiók/Bejelentkezés/Kijelentkezés gombok -->
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('account') }}" class="btn btn-outline-secondary ms-1">Felhasználói fiók</a>
+                            <a href="{{ url_for('logout') }}" class="btn btn-secondary ms-1">Kijelentkezés</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-secondary ms-1">Bejelentkezés</a>
+                        {% endif %}
+
+                    </div>
                 </div>
 
             </div>
@@ -80,6 +86,6 @@
             {% endblock scripts %}
 
         </div>        
-
     </body>
+
 </html>

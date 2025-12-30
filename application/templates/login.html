@@ -1,45 +1,62 @@
 {% extends 'index.html' %}
 
 {% block content %}
-    <div class="content-section">
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Bejelentkezés</legend>
-                <div class="form-group">
-                    {{ form.email.label(class="form-control-label") }}
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+            <h2 class="text-center mb-4">Bejelentkezés</h2>
+
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+
+                <!-- Email -->
+                <div class="mb-3">
+                    {{ form.email.label(class="form-label") }}
+
                     {% if form.email.errors %}
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        {{ form.email(class="form-control is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.email.errors %}
-                                <span>{{ error }}</span>
+                                {{ error }}
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.email(class="form-control form-control-lg") }}
+                        {{ form.email(class="form-control") }}
                     {% endif %}
                 </div>
-                <div class="form-group">
-                    {{ form.password.label(class="form-control-label") }}
+
+                <!-- Jelszó -->
+                <div class="mb-3">
+                    {{ form.password.label(class="form-label") }}
+
                     {% if form.password.errors %}
-                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        {{ form.password(class="form-control is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
+                                {{ error }}
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.password(class="form-control form-control-lg") }}
+                        {{ form.password(class="form-control") }}
                     {% endif %}
                 </div>
-                <div class="form-check">
+
+                <!-- Remember me -->
+                <div class="form-check mb-4">
                     {{ form.remember(class="form-check-input") }}
                     {{ form.remember.label(class="form-check-label") }}
                 </div>
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-secondary") }}
-            </div>
-        </form>
+
+                <!-- Gomb -->
+                <div class="d-flex justify-content-center mt-4 mb-4 gap-3">
+                    {{ form.submit(class="btn btn-secondary px-4") }}
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary px-4">
+                    Mégse
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
     </div>
 {% endblock content %}

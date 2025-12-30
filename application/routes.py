@@ -3,7 +3,26 @@ from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User
 from application.forms import NewUserForm, LoginForm, UpdateUserData, DeleteAccountForm, ChangePasswordForm
-from application.decorators import roles_required
+from application.utils.auth_role import roles_required
+from datetime import datetime
+
+
+MONTHS_HU = {
+    1: "január", 2: "február", 3: "március", 4: "április",
+    5: "május", 6: "június", 7: "július", 8: "augusztus",
+    9: "szeptember", 10: "október", 11: "november", 12: "december"
+}
+
+@app.context_processor
+def inject_current_date():
+    now = datetime.now()
+    return {
+        "current_date": {
+            "year": now.year,
+            "month": MONTHS_HU[now.month],
+            "day": now.day
+        }
+    }
 
 
 # ----------------------------------------------------------------------
