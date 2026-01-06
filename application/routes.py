@@ -28,8 +28,9 @@ def inject_current_date():
 # ----------------------------------------------------------------------
 # FŐOLDAL
 # ----------------------------------------------------------------------
-@app.route('/')
+
 @app.route('/home')
+@login_required
 def home():
     return render_template('index.html', title='Főoldal')
 
@@ -71,6 +72,13 @@ def register():
 # BEJELENTKEZÉS 
 # – felhasználó autentikáció (Flask-Login)
 # ----------------------------------------------------------------------
+
+@app.route('/')
+def root():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    return redirect(url_for('login'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -101,7 +109,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 # ----------------------------------------------------------------------
