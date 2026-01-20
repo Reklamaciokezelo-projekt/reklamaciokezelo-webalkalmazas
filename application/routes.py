@@ -1,35 +1,18 @@
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, flash
 from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User
 from application.forms import NewUserForm, LoginForm, UpdateUserData, DeleteAccountForm, ChangePasswordForm
 from application.utils.auth_role import roles_required
-from datetime import datetime
 
-
-MONTHS_HU = {
-    1: "január", 2: "február", 3: "március", 4: "április",
-    5: "május", 6: "június", 7: "július", 8: "augusztus",
-    9: "szeptember", 10: "október", 11: "november", 12: "december"
-}
-
-@app.context_processor
-def inject_current_date():
-    now = datetime.now()
-    return {
-        "current_date": {
-            "year": now.year,
-            "month": MONTHS_HU[now.month],
-            "day": now.day
-        }
-    }
 
 
 # ----------------------------------------------------------------------
 # FŐOLDAL
 # ----------------------------------------------------------------------
-@app.route('/')
+
 @app.route('/home')
+@login_required
 def home():
     return render_template('index.html', title='Főoldal')
 
@@ -71,6 +54,13 @@ def register():
 # BEJELENTKEZÉS 
 # – felhasználó autentikáció (Flask-Login)
 # ----------------------------------------------------------------------
+
+@app.route('/')
+def root():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    return redirect(url_for('login'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -101,7 +91,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 # ----------------------------------------------------------------------
