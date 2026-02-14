@@ -1,0 +1,145 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Reklamációs Statisztikák</h2>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <form method="POST" class="row g-3 align-items-end">
+                {{ form.hidden_tag() }}
+                
+                <div class="col-md-2">
+                    {{ form.start_date.label(class="form-label") }}
+                    {{ form.start_date(class="form-control", type="date") }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.end_date.label(class="form-label") }}
+                    {{ form.end_date(class="form-control", type="date") }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.group_by.label(class="form-label") }}
+                    {{ form.group_by(class="form-select") }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.chart_type.label(class="form-label") }}
+                    {{ form.chart_type(class="form-select") }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="chart-data-bridge" 
+        data-labels='{{ labels | tojson }}' 
+        data-values='{{ values | tojson }}' 
+        data-type='{{ chart_type }}'
+        data-criterion='{{ form.group_by.data }}'
+        style="display: none;">
+    </div>
+
+    <form action="{{ url_for('download_report_pdf') }}" method="POST" style="display: inline;">
+        {{ form.hidden_tag() }}
+        <input type="hidden" name="start_date" value="{{ form.start_date.data }}">
+        <input type="hidden" name="end_date" value="{{ form.end_date.data }}">
+        <input type="hidden" name="group_by" value="{{ form.group_by.data }}">
+    
+        <button type="submit" class="btn btn-danger mb-3">
+            <i class="fas fa-file-pdf"></i> Letöltés PDF-ben
+        </button>
+    </form>
+
+    <div class="card shadow">
+        <div class="card-body">
+            {% if labels|length > 0 %}
+                <canvas id="myChart" height="100"></canvas>
+            {% else %}
+                <div class="text-center text-muted py-5">
+                    <p>Nincs megjeleníthető adat a kiválasztott időszakban.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const bridge = document.getElementById('chart-data-bridge');
+        if (!bridge) return;
+
+        const labels = JSON.parse(bridge.dataset.labels);
+        const values = JSON.parse(bridge.dataset.values);
+        const chartType = bridge.dataset.type;
+        
+        // JAVÍTÁS 3: A detektálás most már a criterion-ra épül
+        const criterion = bridge.dataset.criterion;
+        const isCost = criterion === 'monthly_cost';
+        
+        const labelText = isCost ? 'Összesített költség (HUF)' : 'Reklamációk száma';
+
+        if (labels.length === 0) return;
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: labelText,
+                    data: values,
+                    fill: chartType === 'line',
+                    tension: 0.3,
+                    // Egységes színek, hogy mindenhol jól mutasson
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let val = context.parsed.y;
+                                if (isCost) {
+                                    return context.dataset.label + ': ' + new Intl.NumberFormat('hu-HU').format(val) + ' Ft';
+                                }
+                                return context.dataset.label + ': ' + val + ' db';
+                            }
+                        }
+                    }
+                },
+                scales: chartType !== 'pie' ? {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // JAVÍTÁS 4: Tengely formázás javítása
+                            // Ha NEM költség, akkor stepSize=1 (csak egész számok)
+                            stepSize: isCost ? undefined : 1,
+                            callback: function(value) {
+                                if (isCost) {
+                                    return new Intl.NumberFormat('hu-HU').format(value) + ' Ft';
+                                }
+                                // Ha darabszám, csak az egészeket írjuk ki
+                                if (Number.isInteger(value)) {
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                } : {}
+            }
+        });
+    });
+</script>
+{% endblock scripts %}

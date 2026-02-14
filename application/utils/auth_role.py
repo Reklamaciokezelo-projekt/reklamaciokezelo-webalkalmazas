@@ -1,21 +1,14 @@
-from flask_login import current_user
 from functools import wraps
 from flask import abort
+from flask_login import current_user
 
-
-# ----------------------------------------------------------------------
-# Dekorátor, amely ellenőrzi, hogy a bejelentkezett felhasználó rendelkezik-e a szükséges szerepkörrel.
-# Ha nem, akkor 403 Forbidden hibát dob.
-# ----------------------------------------------------------------------
 def roles_required(*roles):
-    
-    def decorator(f):
+    def wrapper(f):
         @wraps(f)
-        def decorated_function(*args, **kwargs):
-            if not current_user.is_authenticated:
-                abort(403)
-            if current_user.role not in roles:
+        def decorated_view(*args, **kwargs):
+            # --- A felhasználó be van-e jelentkezve és a szerepkör neve benne van-e a listában ---
+            if not current_user.is_authenticated or current_user.role.name not in roles:
                 abort(403)
             return f(*args, **kwargs)
-        return decorated_function
-    return decorator
+        return decorated_view
+    return wrapper
