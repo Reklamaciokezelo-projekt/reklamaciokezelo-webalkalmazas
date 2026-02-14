@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 text-center">
+
+        <h3 class="mb-3">Biztosan törölni szeretnéd a reklamációt?</h3>
+        <p class="text-danger fw-semibold">
+            Ez a művelet nem visszavonható!
+        </p>
+
+        <div class="card shadow-sm border-danger mb-4 text-start">
+            <div class="card-body bg-light">
+                <p class="mb-1">
+                    <strong>Reklamáció száma:</strong> 
+                    <span class="text-danger fs-5">{{ reklamacio.complaint_number }}</span>
+                </p>
+                <p class="mb-1">
+                    <strong>Vevő:</strong> 
+                    {{ reklamacio.customer.display_name if reklamacio.customer else 'Nincs megadva' }}
+                </p>
+                <p class="mb-0">
+                    <strong>Cikkszám:</strong> 
+                    {{ reklamacio.product_identifier }}
+                </p>
+            </div>
+        </div>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+                {{ form.submit(class="btn btn-danger px-4", value="Törlés") }}
+                <a href="{{ url_for('reklamaciok') }}" class="btn btn-outline-secondary px-4">
+                    Mégse
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock content %}
