@@ -120,3 +120,11 @@ div.dataTables_filter {
 .form-control {
     width: 100%;
 }
+
+#reklamaciokTable {
+    border: 1px solid #ccc;
+}
+
+#reklamaciokTable th, #usersTable td {
+    border: 1px solid #ddd;
+}

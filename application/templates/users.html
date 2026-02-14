@@ -33,10 +33,10 @@
                             <td>{{ u.id }}</td>
                             <td>{{ u.surname }}</td>
                             <td>{{ u.forename }}</td>
-                            <td>{{ u.position }}</td>
+                            <td>{{ u.position.display_name }}</td>
                             <td>{{ u.username }}</td>
                             <td>{{ u.email }}</td>
-                            <td>{{ u.role }}</td>
+                            <td>{{ u.role.display_name }}</td>
                             <td class="text-nowrap">
                                 <a href="{{ url_for('update_user', user_id=u.id) }}" class="btn btn-sm btn-primary ms-2">Módosítás</a>
                                 <a href="{{ url_for('delete_account', user_id=u.id) }}" class="btn btn-sm btn-danger ms-2">Törlés</a>
@@ -61,7 +61,7 @@
     <script src="https://cdn.datatables.net/responsive/3.0.7/js/dataTables.responsive.min.js"></script>
 
 
-    <!-- DataTables inicializálása. -->
+    <!-- DataTables inicializálása -->
     <script>
         $(document).ready(function() {
             $('#usersTable').DataTable({
