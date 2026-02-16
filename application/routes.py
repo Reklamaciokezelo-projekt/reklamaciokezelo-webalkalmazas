@@ -521,32 +521,45 @@ def reports():
         query = None
 
         # --- Dinamikus lekérdezés összeállítása a kritérium alapján ---
+
+        # --- Hiba típus ---
         if group_criterion == 'defect_type':
             query = db.session.query(DefectType.display_name, func.count(Reklamacio.id))\
                 .join(Reklamacio.defect_type)\
                 .group_by(DefectType.display_name)
         
+        # --- Vevő ---
         elif group_criterion == 'customer':
             query = db.session.query(Customer.display_name, func.count(Reklamacio.id))\
                 .join(Reklamacio.customer)\
                 .group_by(Customer.display_name)
         
+        # --- Termék ---
         elif group_criterion == 'product':
             query = db.session.query(Product.display_name, func.count(Reklamacio.id))\
                 .join(Reklamacio.product)\
                 .group_by(Product.display_name)
 
+        # --- Státusz ---
         elif group_criterion == 'status':
             query = db.session.query(Status.display_name, func.count(Reklamacio.id))\
                 .join(Reklamacio.status)\
                 .group_by(Status.display_name)
+            
+        # --- Üzemegység ---
+        elif group_criterion == 'department':
+            query = db.session.query(Department.display_name, func.count(Reklamacio.id))\
+                .join(Reklamacio.department)\
+                .group_by(Department.display_name)
 
+        # --- Havi költség ---
         elif group_criterion == 'monthly_cost':
             month_format = func.to_char(Reklamacio.complaint_date, 'YYYY-MM')
             query = db.session.query(month_format, func.sum(Reklamacio.total_cost))\
                 .group_by(month_format)\
                 .order_by(month_format)
-            
+
+        # --- Havi darabszám ---   
         elif group_criterion == 'monthly_count':
             month_format = func.to_char(Reklamacio.complaint_date, 'YYYY-MM')
             query = db.session.query(month_format, func.count(Reklamacio.id))\
@@ -587,6 +600,11 @@ def download_report_pdf():
     end_str = request.form.get('end_date')
     group_criterion = request.form.get('group_by')
 
+    # --- Diagram típus és logaritmikus skála kinyerése (alapértelmezett: bar) ---
+    chart_type = request.form.get('chart_type', 'bar')
+    log_scale_str = request.form.get('log_scale', 'false')
+    use_log_scale = (log_scale_str == 'true')
+
     # --- Dátumok visszaalakítása stringből dátum objektummá ---
     start = datetime.strptime(start_str, '%Y-%m-%d').date() if start_str else date.today()
     end = datetime.strptime(end_str, '%Y-%m-%d').date() if end_str else date.today()
@@ -595,22 +613,44 @@ def download_report_pdf():
     query = None
     title_suffix = ""
 
+    # --- Hiba típus ---
     if group_criterion == 'defect_type':
         query = db.session.query(DefectType.display_name, func.count(Reklamacio.id))\
             .join(Reklamacio.defect_type).group_by(DefectType.display_name)
         title_suffix = "Hiba típusok szerint"
     
+    # --- Vevő ---
     elif group_criterion == 'customer':
         query = db.session.query(Customer.display_name, func.count(Reklamacio.id))\
             .join(Reklamacio.customer).group_by(Customer.display_name)
         title_suffix = "Vevők szerint"
 
+    # --- Termék ---
+    elif group_criterion == 'product':
+        query = db.session.query(Product.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.product).group_by(Product.display_name)
+        title_suffix = "Termékek szerint"
+
+    # --- Státusz ---
+    elif group_criterion == 'status':
+        query = db.session.query(Status.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.status).group_by(Status.display_name)
+        title_suffix = "Státusz szerint"
+
+    # --- Üzemegység ---
+    elif group_criterion == 'department':
+        query = db.session.query(Department.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.department).group_by(Department.display_name)
+        title_suffix = "Üzemegységek szerint"
+
+    # --- Havi költség ---
     elif group_criterion == 'monthly_cost':
         month_format = func.to_char(Reklamacio.complaint_date, 'YYYY-MM')
         query = db.session.query(month_format, func.sum(Reklamacio.total_cost))\
             .group_by(month_format).order_by(month_format)
         title_suffix = "Havi költségbontás"
 
+    # --- Havi darabszám ---
     elif group_criterion == 'monthly_count':
         month_format = func.to_char(Reklamacio.complaint_date, 'YYYY-MM')
         query = db.session.query(month_format, func.count(Reklamacio.id))\
@@ -634,7 +674,8 @@ def download_report_pdf():
         flash("Nincs adat a PDF generálásához!", "warning")
         return redirect(url_for('reports'))
 
-    pdf_buffer = generate_report_pdf(labels, values, title_suffix)
+    # --- paraméterek átadása ---
+    pdf_buffer = generate_report_pdf(labels, values, title_suffix, chart_type, use_log_scale)
     
     return send_file(
         pdf_buffer,
