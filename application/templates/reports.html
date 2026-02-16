@@ -40,11 +40,14 @@
         style="display: none;">
     </div>
 
-    <form action="{{ url_for('download_report_pdf') }}" method="POST" style="display: inline;">
+    <form action="{{ url_for('download_report_pdf') }}" method="POST" style="display: inline;" id="pdfDownloadForm">
         {{ form.hidden_tag() }}
         <input type="hidden" name="start_date" value="{{ form.start_date.data }}">
         <input type="hidden" name="end_date" value="{{ form.end_date.data }}">
         <input type="hidden" name="group_by" value="{{ form.group_by.data }}">
+        
+        <input type="hidden" name="chart_type" value="{{ form.chart_type.data }}">
+        <input type="hidden" name="log_scale" id="hiddenLogScale" value="false">
     
         <button type="submit" class="btn btn-danger mb-3">
             <i class="fas fa-file-pdf"></i> Letöltés PDF-ben
@@ -54,7 +57,18 @@
     <div class="card shadow">
         <div class="card-body">
             {% if labels|length > 0 %}
-                <canvas id="myChart" height="100"></canvas>
+                
+                <div class="d-flex justify-content-end mb-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="logScaleSwitch">
+                        <label class="form-check-label" for="logScaleSwitch">Logaritmikus skála</label>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="position: relative; height: 50vh; max-height: 450px; width: 100%;">
+                    <canvas id="myChart"></canvas>
+                </div>
+
             {% else %}
                 <div class="text-center text-muted py-5">
                     <p>Nincs megjeleníthető adat a kiválasztott időszakban.</p>
@@ -78,18 +92,33 @@
         const labels = JSON.parse(bridge.dataset.labels);
         const values = JSON.parse(bridge.dataset.values);
         const chartType = bridge.dataset.type;
-        
-        // JAVÍTÁS 3: A detektálás most már a criterion-ra épül
         const criterion = bridge.dataset.criterion;
+
         const isCost = criterion === 'monthly_cost';
-        
         const labelText = isCost ? 'Összesített költség (HUF)' : 'Reklamációk száma';
+        
+        // Színpaletták
+        const paletteBackground = [
+            'rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
+            'rgba(201, 203, 207, 0.6)', 'rgba(100, 220, 100, 0.6)'
+        ];
+        const paletteBorder = [
+            'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)',
+            'rgba(201, 203, 207, 1)', 'rgba(100, 220, 100, 1)'
+        ];
+
+        const isPie = chartType === 'pie' || chartType === 'doughnut';
+        const chartBg = isPie ? paletteBackground : 'rgba(54, 162, 235, 0.5)';
+        const chartBorder = isPie ? paletteBorder : 'rgba(54, 162, 235, 1)';
 
         if (labels.length === 0) return;
 
+        const maxValue = values.length > 0 ? Math.max(...values) : 0;
         const ctx = document.getElementById('myChart').getContext('2d');
 
-        new Chart(ctx, {
+        let myChart = new Chart(ctx, {
             type: chartType,
             data: {
                 labels: labels,
@@ -98,48 +127,76 @@
                     data: values,
                     fill: chartType === 'line',
                     tension: 0.3,
-                    // Egységes színek, hogy mindenhol jól mutasson
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: chartBg,
+                    borderColor: chartBorder,
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false, 
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                let val = context.parsed.y;
+                                let val = context.raw;
                                 if (isCost) {
                                     return context.dataset.label + ': ' + new Intl.NumberFormat('hu-HU').format(val) + ' Ft';
                                 }
                                 return context.dataset.label + ': ' + val + ' db';
                             }
                         }
+                    },
+                    legend: {
+                        display: isPie,
+                        position: 'top'
                     }
                 },
-                scales: chartType !== 'pie' ? {
+                scales: isPie ? {} : {
                     y: {
+                        type: 'linear',
                         beginAtZero: true,
+                        suggestedMax: isCost ? undefined : maxValue + 1,
                         ticks: {
-                            // JAVÍTÁS 4: Tengely formázás javítása
-                            // Ha NEM költség, akkor stepSize=1 (csak egész számok)
                             stepSize: isCost ? undefined : 1,
                             callback: function(value) {
                                 if (isCost) {
-                                    return new Intl.NumberFormat('hu-HU').format(value) + ' Ft';
+                                    return new Intl.NumberFormat('hu-HU', { notation: "compact" }).format(value) + ' Ft';
                                 }
-                                // Ha darabszám, csak az egészeket írjuk ki
-                                if (Number.isInteger(value)) {
-                                    return value;
-                                }
+                                if (Number.isInteger(value)) { return value; }
                             }
                         }
                     }
-                } : {}
+                }
             }
         });
+
+        // --- KAPCSOLÓ KEZELÉSE ÉS SZINKRONIZÁLÁSA A PDF FORM-MAL ---
+        const logSwitch = document.getElementById('logScaleSwitch');
+        const hiddenLogInput = document.getElementById('hiddenLogScale');
+        
+        if (isPie && logSwitch) {
+            logSwitch.parentElement.parentElement.style.display = 'none';
+        }
+
+        if (logSwitch && !isPie) {
+            logSwitch.addEventListener('change', function() {
+                const isLog = this.checked;
+                const scaleType = isLog ? 'logarithmic' : 'linear';
+                
+                // Chart.js frissítése
+                myChart.options.scales.y.type = scaleType;
+                if (scaleType === 'logarithmic') {
+                    myChart.options.scales.y.min = isCost ? undefined : 0.1; 
+                } else {
+                    myChart.options.scales.y.min = 0; 
+                }
+                myChart.update();
+
+                // Rejtett mező frissítése a form-ban
+                hiddenLogInput.value = isLog ? "true" : "false";
+            });
+        }
     });
 </script>
 {% endblock scripts %}

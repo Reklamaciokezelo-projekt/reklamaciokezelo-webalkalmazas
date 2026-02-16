@@ -208,5 +208,5 @@ class ReportFilterForm(FlaskForm):
         ('pie', 'Kördiagram')
     ], validators=[DataRequired()])
 
-    submit = SubmitField('Riport készítése')
+    submit = SubmitField('Riport generálása')
         
