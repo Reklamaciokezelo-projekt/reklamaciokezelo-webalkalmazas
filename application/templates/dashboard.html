@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Oldal cím  -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 fw-bold">Áttekintés</h1>
+    <small class="text-muted"><i class="bi bi-activity"></i> Élő adatok</small>
+</div>
+
+<!-- Kártyák -->
+<div class="row g-4 mb-4">
+    
+    <!-- Reklamációk száma -->
+    <div class="col-xl-3 col-md-6">
+        <div id="card-count" class="card h-100 shadow
+            {% if current_month_count > 5 %}card-status-danger{% else %}card-status-ok{% endif %}">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col me-2">
+                        <div class="text-uppercase mb-1 small fw-bold text-white-80">
+                            Aktuális Hónap
+                        </div>
+                        <div id="value-count" class="h2 mb-0 fw-bold">{{ current_month_count }} db</div>
+                        <small id="text-count-desc" class="text-white-strong">{{ current_month_name }} havi reklamációk</small>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-calendar-check fs-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Havi reklamációs költség -->
+    <div class="col-xl-3 col-md-6">
+        <div id="card-cost" class="card shadow h-100 py-2 border-0 
+            {% if current_month_cost > 500000 %}card-border-danger{% else %}card-border-ok{% endif %}">
+            
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col me-2">
+                        <div id="label-cost" class="text-uppercase mb-1 small fw-bold 
+                            {% if current_month_cost > 500000 %}text-danger-custom{% else %}text-success{% endif %}">
+                            Költségek (Havi)
+                        </div>
+                        
+                        <div id="value-cost" class="h3 mb-0 fw-bold 
+                            {% if current_month_cost > 500000 %}text-danger-custom{% else %}text-gray-800{% endif %}">
+                            {{ "{:,.0f}".format(current_month_cost).replace(',', ' ') }} Ft
+                        </div>
+                        <small class="text-muted">{{ current_month_name }} havi reklamációs költség</small>
+                    </div>
+                    <div class="col-auto">
+                        <i id="icon-cost" class="bi bi-cash-stack fs-1 opacity-50 
+                           {% if current_month_cost > 500000 %}text-danger-custom{% else %}text-success{% endif %}"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Éves reklamációs költség -->
+     <div class="col-xl-3 col-md-6">
+        <div class="card shadow h-100 py-2 border-0 border-start border-4 card-border-ytd">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col me-2">
+                        <div class="text-uppercase mb-1 small fw-bold text-ytd">
+                            Éves Összköltség
+                        </div>
+                        
+                        <div id="value-year-cost" class="h3 mb-0 fw-bold text-gray-800">
+                            {{ "{:,.0f}".format(current_year_cost).replace(',', ' ') }} Ft
+                        </div>
+                        <small class="text-muted">{{ current_year }}. évi reklamációs költség</small>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-wallet2 fs-1 opacity-50 text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visszaszállítást igényelt -->
+     <div class="col-xl-3 col-md-6">
+        <div class="card shadow h-100 py-2 border-0 card-border-return">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col me-2">
+                        <div class="text-uppercase mb-1 small fw-bold text-return">
+                            Visszáru (Éves)
+                        </div>
+                        
+                        <div id="value-return-count" class="h2 mb-0 fw-bold text-gray-800">
+                            {{ current_return_count }} db
+                        </div>
+                        <small class="text-muted">{{ current_year }}. évi visszaszállítások</small>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-truck fs-1 opacity-50 text-return"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mb-4">
+    
+    <!-- Grafikon -->
+    <div class="col-lg-8 mb-4 mb-lg-0">
+        <div class="card shadow h-100 border-0">
+            <div class="card-header py-3 bg-white border-bottom-0">
+                <h6 class="m-0 fw-bold text-gray-800">Reklamációk havi eloszlása (Elmúlt 12 hónap)</h6>
+            </div>
+            <div class="card-body">
+                <div style="height: 320px; width: 100%;">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Üzemegység reklamációk -->
+    <div class="col-lg-4">
+        <div class="card shadow h-100 border-0">
+            <div class="card-header py-3 bg-white border-bottom-0">
+                <h6 class="m-0 fw-bold text-gray-800">Üzemegységi megoszlás ({{ current_year }})</h6>
+            </div>
+            <div class="card-body p-0 scrollable-list"> <ul class="list-group list-group-flush" id="department-list">
+                    <li class="list-group-item text-center text-muted p-4 border-0">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div> Adatok betöltése...
+                    </li>
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Reklamációk listája (5 legfrissebb) -->
+<table id="dashboardTable" class="table table-hover align-middle w-100" style="width:100%">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th> <th>Dátum</th> <th>Vevő</th> <th>Termék</th> <th>Hiba</th> <th>Menny.</th> <th>Státusz</th>
+            <th class="none">Rekl. szám</th> <th class="none">Üzemegység</th> <th class="none">Visszáru</th>
+            <th class="none">Kiszállítás</th> <th class="none">Költség</th> <th class="none">Rögzítette</th>
+        </tr>
+    </thead>
+    <tbody>
+        </tbody>
+</table>
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(document).ready(function() {
+
+        // --- Grafikon vonalak rajzolása ---
+        const customLinesPlugin = {
+            id: 'customLines',
+            afterDraw: (chart) => {
+                const ctx = chart.ctx;
+                const xAxis = chart.scales.x;
+                const yAxis = chart.scales.y;
+
+                ctx.save();
+                
+                // --- Vízszintes vonal ---
+                const limitValue = 4;
+                const yPixel = yAxis.getPixelForValue(limitValue);
+                
+                ctx.beginPath();
+                ctx.moveTo(xAxis.left, yPixel);
+                ctx.lineTo(xAxis.right, yPixel);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = 'rgba(231, 74, 59, 0.7)';
+                ctx.setLineDash([]);
+                ctx.stroke();
+
+                // --- Függőleges vonal (Évváltás) ---
+                const yearChangeIndex = chart.config.data.yearChangeIndex;
+                if (yearChangeIndex !== undefined && yearChangeIndex > 0) {
+                    const leftPixel = xAxis.getPixelForTick(yearChangeIndex - 1);
+                    const rightPixel = xAxis.getPixelForTick(yearChangeIndex);
+                    const xPixel = (leftPixel + rightPixel) / 2;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(xPixel, yAxis.top);
+                    ctx.lineTo(xPixel, yAxis.bottom);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#9ca3af'; 
+                    ctx.setLineDash([5, 5]); 
+                    ctx.stroke();
+                    ctx.setLineDash([]); 
+                }
+                
+                ctx.restore();
+            }
+        };
+
+        // --- A grafikon alapbeállítása és létrehozása ---
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [], 
+                yearChangeIndex: -1, 
+                datasets: [{
+                    label: 'Reklamációk száma',
+                    data: [], 
+                    backgroundColor: '#3498db',
+                    hoverBackgroundColor: '#2980b9',
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            plugins: [customLinesPlugin], 
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 }, grace: '20%' },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        
+        // --- AJAX Lekérdezések ---
+        function updateDashboard() {
+            $.ajax({
+                url: '/api/dashboard-stats',
+                method: 'GET',
+                success: function(data) {
+
+                    // --- 1.Kártya (darabszám) ---
+                    const count = data.count;
+                    $('#value-count').text(count + ' db');
+                    const countCard = $('#card-count');
+                    if (count > 4) { countCard.removeClass('card-status-ok').addClass('card-status-danger'); } 
+                    else { countCard.removeClass('card-status-danger').addClass('card-status-ok'); }
+
+                    // --- 2.Kártya (költség) ---
+                    const cost = data.cost;
+                    const formattedCost = new Intl.NumberFormat('hu-HU').format(cost) + ' Ft';
+                    $('#value-cost').text(formattedCost);
+                    const costCard = $('#card-cost');
+                    const costLabel = $('#label-cost');
+                    const costValue = $('#value-cost');
+                    const costIcon = $('#icon-cost');
+                    if (cost > 500000) {
+                        costCard.removeClass('card-border-ok').addClass('card-border-danger');
+                        costLabel.removeClass('text-success').addClass('text-danger-custom');
+                        costValue.removeClass('text-gray-800').addClass('text-danger-custom');
+                        costIcon.removeClass('text-success').addClass('text-danger-custom');
+                    } else {
+                        costCard.removeClass('card-border-danger').addClass('card-border-ok');
+                        costLabel.removeClass('text-danger-custom').addClass('text-success');
+                        costValue.removeClass('text-danger-custom').addClass('text-gray-800');
+                        costIcon.removeClass('text-danger-custom').addClass('text-success');
+                    }
+
+                    // --- 3.Kártya (éves költség) ---
+                    const yearCost = data.year_cost;
+                    const formattedYearCost = new Intl.NumberFormat('hu-HU').format(yearCost) + ' Ft';
+                    $('#value-year-cost').text(formattedYearCost);
+
+                    // --- 4.Kártya (éves viszáru) ---
+                    const returnCount = data.return_count;
+                    $('#value-return-count').text(returnCount + ' db');
+
+                    // --- Grafikon frissítése ---
+                    const chartData = data.monthly_data; 
+                    monthlyChart.data.labels = chartData.labels; 
+                    monthlyChart.data.datasets[0].data = chartData.counts;
+                    monthlyChart.data.yearChangeIndex = chartData.year_change_index; 
+                    monthlyChart.update();
+
+                    // --- Üzemegység lista frissítése ---
+                    const deptData = data.dept_data;
+                    const deptList = $('#department-list');
+                    deptList.empty();
+                    if (deptData && deptData.length > 0) {
+                        deptData.forEach(function(dept) {
+                            const listItem = `
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-0 border-bottom">
+                                    <span class="text-secondary fw-medium">${dept.name}</span>
+                                    <span class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm">${dept.count}</span>
+                                </li>
+                            `;
+                            deptList.append(listItem);
+                        });
+                    } else {
+                        deptList.append('<li class="list-group-item text-center text-muted p-4 border-0">Még nincs adat az idei évre.</li>');
+                    }
+                },
+                error: function(err) { console.error("Nem sikerült frissíteni az adatokat", err); }
+            });
+        }
+        
+        // --- Datatables inicializálása ---
+        var table = $('#dashboardTable').DataTable({
+            responsive: true,
+            language: { url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/hu.json" },
+            paging: false, info: false, lengthChange: false, searching: true, ordering: false,
+            
+            // --- Adatforrás megadása ---
+            ajax: '/api/recent-reklamaciok',
+            
+            // --- Oszlopdefiníciók és egyedi formázás ---
+            columns: [
+                { data: 'id', render: function(data) { return '<span class="fw-bold text-secondary">#' + data + '</span>'; }},
+                { data: 'date' },
+                { data: 'customer' },
+                { data: null, render: function(data, type, row) {
+                    return '<div class="d-flex flex-column" style="line-height: 1.2;"><span>' + row.product_name + '</span><small class="text-muted" style="font-size: 0.75rem;">' + row.product_id + '</small></div>';
+                }},
+                { data: 'defect' },
+                { data: 'quantity', render: function(data) { return '<span class="fw-bold">' + data + '</span>'; } },
+                { data: 'status', render: function(data) {
+                    if (data === 'folyamatban') return '<span class="badge bg-warning text-dark">Folyamatban</span>';
+                    if (data === 'elfogadva') return '<span class="badge bg-success">Elfogadva</span>';
+                    if (data.toLowerCase() === 'visszautasítva' || data.toLowerCase() === 'visszautasitva') return '<span class="badge bg-danger">Elutasítva</span>';
+                    return '<span class="badge bg-secondary">' + data + '</span>';
+                }},
+                { data: 'complaint_number', className: 'none' },
+                { data: 'department', className: 'none' },
+                { data: 'requires_return', className: 'none', render: function(data) {
+                    return data ? '<span class="text-danger fw-bold"><i class="bi bi-check-circle-fill"></i> Igen</span>' : '<span class="text-secondary"><i class="bi bi-x-circle"></i> Nem</span>';
+                }},
+                { data: 'shipping_date', className: 'none' },
+                { data: 'cost', className: 'none', render: function(data) {
+                    return '<span class="font-monospace fw-bold">' + new Intl.NumberFormat('hu-HU').format(data) + ' Ft</span>';
+                }},
+                { data: 'user', className: 'none' }
+            ],
+
+            // --- Reszponzív prioritások beállítása ---
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, 
+                { responsivePriority: 2, targets: -1 }
+            ]
+        });
+
+        // --- Reszponzív újraszámolás ---
+        $(window).on('resize', function () {
+            table.columns.adjust().responsive.recalc();
+        });
+
+        // --- Azonnali első frissítés ---
+        updateDashboard();
+        
+        // --- Frissítés percenként ---
+        setInterval(function() {
+            updateDashboard();
+            table.ajax.reload(null, false);
+        }, 60000);
+
+    });
+</script>
+{% endblock scripts %}
