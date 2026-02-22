@@ -1,93 +1,115 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.4/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 
 <div class="row justify-content-center mt-4">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+    <div class="col-12 col-md-10 col-lg-8">
 
-        <h2 class="text-center mb-4">Felhasználó adatainak módosítása</h2>
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
-
-            <div class="mb-3">
-                {{ form.surname.label(class="form-label") }}
-                {{ form.surname(class="form-control" + (" is-invalid" if form.surname.errors else "")) }}
-                {% if form.surname.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.surname.errors %}{{ error }}{% endfor %}
+                <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-person-gear fs-3"></i>
                     </div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                {{ form.forename.label(class="form-label") }}
-                {{ form.forename(class="form-control" + (" is-invalid" if form.forename.errors else "")) }}
-                {% if form.forename.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.forename.errors %}{{ error }}{% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                {{ form.position.label(class="form-label") }}
-                {{ form.position(class="form-select" + (" is-invalid" if form.position.errors else ""), id="position-tags") }}
-                {% if form.position.errors %}
-                    <div class="text-danger small mt-1">
-                        {% for error in form.position.errors %}{{ error }}{% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                {{ form.username.label(class="form-label") }}
-                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
-                {% if form.username.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.username.errors %}{{ error }}{% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="mb-3">
-                {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
-                {% if form.email.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.email.errors %}{{ error }}{% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="mb-4">
-                {{ form.role.label(class="form-label") }}
-                {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
-                {% if form.role.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.role.errors %}{{ error }}{% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
-                {{ form.submit(class="btn btn-primary px-4") }} <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4">
-                    Mégse
-                </a>
-            </div>
-
-        </form>
-
-        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-            <div id="localSuccessToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header bg-success text-white">
-                    <strong class="me-auto">Rendszerüzenet</strong>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    <h3 class="mb-0 fw-bold text-gray-800">Felhasználó adatainak módosítása</h3>
                 </div>
-                <div class="toast-body">
-                    <span id="localToastMessage"></span>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <h5 class="text-secondary mb-3">Személyes adatok</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.surname.label(class="form-label fw-medium") }}
+                            {{ form.surname(class="form-control" + (" is-invalid" if form.surname.errors else "")) }}
+                            {% if form.surname.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.surname.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.forename.label(class="form-label fw-medium") }}
+                            {{ form.forename(class="form-control" + (" is-invalid" if form.forename.errors else "")) }}
+                            {% if form.forename.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.forename.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.position.label(class="form-label fw-medium") }}
+                        {{ form.position(class="form-select" + (" is-invalid" if form.position.errors else ""), id="position-tags") }}
+                        {% if form.position.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.position.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <h5 class="text-secondary mb-3 mt-4 pt-3 border-top">Belépési adatok és Jogosultságok</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.username.label(class="form-label fw-medium") }}
+                            {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.email.label(class="form-label fw-medium") }}
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.role.label(class="form-label fw-medium") }}
+                        {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
+                        {% if form.role.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.role.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-5">
+                        <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4">
+                            Mégse
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                            <i class="bi bi-save me-1"></i> Mentés
+                        </button>
+                    </div>
+
+                </form>
+
+                <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+                    <div id="localSuccessToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header bg-success text-white">
+                            <strong class="me-auto">Rendszerüzenet</strong>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                        </div>
+                        <div class="toast-body">
+                            <span id="localToastMessage"></span>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
@@ -104,7 +126,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        initDynamicSelect('position-tags', 'Válassz vagy gépelj be újat...', false);
+        // Paraméterek: (ID, Placeholder, Creatable)
+        // False-ra van állítva, mert módosításkor gyakran nem akarjuk, hogy újat gépeljen, csak meglévőt válasszon
+        initDynamicSelect('position-tags', 'Válassz beosztást...', false);
     });
 </script>
 {% endblock scripts %}
