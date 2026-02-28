@@ -1,19 +1,4 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="hu">
-    <head>
-        <meta charset="UTF-8">
-        <title>Bejelentkezés</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            .login-img {
-            background-image: url("{{ url_for('static', filename='welding.jpg') }}");
-            background-size: cover;
-            background-position: center right;
-            }
-=======
 {% extends "base.html" %}
->>>>>>> d48af2b (RKR-21_UI_hozzáadása és teljes UI update)
 
 {% block styles %}
 <style>
@@ -24,29 +9,11 @@
         min-height: 100vh; /* Fontos: teljes magasság */
     }
 
-<<<<<<< HEAD
-                            <!-- Flash üzenetet jelenít meg, amelyiket kell(category) -->
-                            <div class="col-md-12 mt-2">
-                                {% with messages = get_flashed_messages(with_categories = true) %}
-                                    {% if messages%}
-                                        {% for category, message in messages %}
-                                            <div class="alert alert-{{ category }}">    
-                                                {{ message }}           
-                                            </div>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                            <div class="text-center mb-4">
-                                <img src="{{ url_for('static', filename='logo.jpg') }}" class="logo-img">
-                            </div>
-=======
     .logo-img {
         max-width: 180px;
     }
 </style>
 {% endblock styles %}
->>>>>>> d48af2b (RKR-21_UI_hozzáadása és teljes UI update)
 
 {% block content_login %}
 <section class="vh-100 bg-white"> <div class="container-fluid h-100">
