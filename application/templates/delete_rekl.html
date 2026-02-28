@@ -1,41 +1,53 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
 <div class="row justify-content-center mt-4">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 text-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
 
-        <h3 class="mb-3">Biztosan törölni szeretnéd a reklamációt?</h3>
-        <p class="text-danger fw-semibold">
-            Ez a művelet nem visszavonható!
-        </p>
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5 text-center">
 
-        <div class="card shadow-sm border-danger mb-4 text-start">
-            <div class="card-body bg-light">
-                <p class="mb-1">
-                    <strong>Reklamáció száma:</strong> 
-                    <span class="text-danger fs-5">{{ reklamacio.complaint_number }}</span>
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex justify-content-center align-items-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                    <i class="bi bi-exclamation-triangle-fill fs-1"></i>
+                </div>
+
+                <h3 class="mb-3 fw-bold text-gray-800">Reklamáció törlése</h3>
+                
+                <p class="text-danger fw-semibold mb-4">
+                    Biztosan törölni szeretnéd ezt a reklamációt? <br>
+                    <span class="fw-normal">Ez a művelet végleges és nem visszavonható!</span>
                 </p>
-                <p class="mb-1">
-                    <strong>Vevő:</strong> 
-                    {{ reklamacio.customer.display_name if reklamacio.customer else 'Nincs megadva' }}
-                </p>
-                <p class="mb-0">
-                    <strong>Cikkszám:</strong> 
-                    {{ reklamacio.product_identifier }}
-                </p>
+
+                <div class="bg-light border border-secondary-subtle rounded-3 p-4 mb-4 mx-auto text-start" style="max-width: 350px;">
+                    <div class="mb-3">
+                        <span class="text-muted small fw-medium d-block mb-1">Reklamáció száma</span>
+                        <span class="fw-bold fs-5 text-danger">{{ reklamacio.complaint_number }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-muted small fw-medium d-block mb-1">Vevő</span>
+                        <span class="fw-medium text-dark">{{ reklamacio.customer.display_name if reklamacio.customer else 'Nincs megadva' }}</span>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-medium d-block mb-1">Cikkszám</span>
+                        <span class="text-dark">{{ reklamacio.product_identifier }}</span>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <a href="{{ url_for('reklamaciok') }}" class="btn btn-outline-secondary px-4 fw-medium">
+                            Mégse
+                        </a>
+                        <button type="submit" class="btn btn-danger px-4 shadow-sm fw-medium">
+                            <i class="bi bi-trash3-fill me-1"></i> Törlés
+                        </button>
+                    </div>
+                </form>
+
             </div>
         </div>
-
-        <form method="POST">
-            {{ form.hidden_tag() }}
-
-            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
-                {{ form.submit(class="btn btn-danger px-4", value="Törlés") }}
-                <a href="{{ url_for('reklamaciok') }}" class="btn btn-outline-secondary px-4">
-                    Mégse
-                </a>
-            </div>
-        </form>
 
     </div>
 </div>

@@ -54,6 +54,10 @@ class User(db.Model, UserMixin):
     # --- Kapcsolatok ---
     role = db.relationship('Role', backref=db.backref('users', lazy=True))
     position = db.relationship('Position', backref=db.backref('users', lazy=True))
+
+    @property
+    def name(self):
+        return f"{self.surname} {self.forename}"
     
     def __repr__(self):
         return f"User ({self.username}, {self.email}, Role: {self.role.name if self.role else 'None'})"

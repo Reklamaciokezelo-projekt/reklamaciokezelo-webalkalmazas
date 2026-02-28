@@ -1,104 +1,82 @@
-<!DOCTYPE html>
-<html lang="hu">
-    <head>
-        <meta charset="UTF-8">
-        <title>Bejelentkezés</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            .login-img {
-            background-image: url("{{ url_for('static', filename='images/welding.jpg') }}");
-            background-size: cover;
-            background-position: center right;
-            }
+{% block styles %}
+<style>
+    .login-img {
+        background-image: url("{{ url_for('static', filename='images/welding.jpg') }}");
+        background-size: cover;
+        background-position: center right;
+        min-height: 100vh; /* Fontos: teljes magasság */
+    }
 
-            .logo-img {
-            max-width: 180px;
-            }
-        </style>
-    </head>
-    <body>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <section class="vh-100">
-            <div class="container-fluid h-100">
-                <div class="row h-100">
-                    <!-- BAL OLDAL -->
-                    <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                        <div class="w-100" style="max-width: 420px;">
+{% block content_login %}
+<section class="vh-100 bg-white"> <div class="container-fluid h-100">
+        <div class="row h-100">
+            
+            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                <div class="w-100" style="max-width: 420px;">
 
-                            <!-- Flash üzenetet jelenít meg, amelyiket kell(category) -->
-                            <div class="col-md-12 mt-2">
-                                {% with messages = get_flashed_messages(with_categories = true) %}
-                                    {% if messages%}
-                                        {% for category, message in messages %}
-                                            <div class="alert alert-{{ category }}">    
-                                                {{ message }}           
-                                            </div>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                            <div class="text-center mb-4">
-                                <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo-img">
-                            </div>
-
-                            <form method="POST" class="d-flex flex-column gap-3">
-                                {{ form.hidden_tag() }}
-
-                                <h3 class="fw-normal text-center mb-4">Bejelentkezés</h3>
-                                
-                                <!-- Email -->
-                                <div>
-                                    {{ form.email.label(class="form-label") }}
-
-                                    {% if form.email.errors %}
-                                        {{ form.email(class="form-control is-invalid") }}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.email.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        {{ form.email(class="form-control") }}
-                                    {% endif %}
-                                </div>
-
-                                <!-- Jelszó -->
-                                <div>
-                                    {{ form.password.label(class="form-label") }}
-
-                                    {% if form.password.errors %}
-                                        {{ form.password(class="form-control is-invalid") }}
-                                        <div class="invalid-feedback">
-                                            {% for error in form.password.errors %}
-                                                {{ error }}
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        {{ form.password(class="form-control") }}
-                                    {% endif %}
-                                </div>
-
-
-                                <!-- Remember me -->
-                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="form-check d-flex align-items-center">
-                                        {{ form.remember(class="form-check-input me-2") }}
-                                        {{ form.remember.label(class="form-check-label") }}
+                    <div class="col-md-12 mt-2">
+                        {% with messages = get_flashed_messages(with_categories = true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">    
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
-
-                                    <a href="#" class="text-muted small">Elfelejtetted a jelszót?</a>
-                                 </div>
-
-                                 {{ form.submit(class="btn btn-info btn-lg text-white") }}
-                            </form>
-                            
-                        </div>
-                        
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
                     </div>
 
-                    <!-- JOBB OLDAL -->
-                    <div class="col-lg-6 d-none d-lg-block login-img"></div>
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo-img" alt="Logo">
+                    </div>
+
+                    <form method="POST" class="d-flex flex-column gap-3">
+                        {{ form.hidden_tag() }}
+
+                        <h3 class="fw-normal text-center mb-4">Bejelentkezés</h3>
+                        
+                        <div>
+                            {{ form.email.label(class="form-label") }}
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %} {{ error }} {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.email(class="form-control") }}
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            {{ form.password.label(class="form-label") }}
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %} {{ error }} {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="form-control") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check d-flex align-items-center">
+                                {{ form.remember(class="form-check-input me-2") }}
+                                {{ form.remember.label(class="form-check-label") }}
+                            </div>
+                            <a href="#" class="text-muted small">Elfelejtetted a jelszót?</a>
+                        </div>
+
+                        {{ form.submit(class="btn btn-info btn-lg text-white w-100") }}
+                    </form>
+                    
                 </div>
             </div>
-        </section>
-    </body>
+
+            <div class="col-lg-6 d-none d-lg-block login-img p-0"></div>
+            
+        </div>
+    </div>
+</section>
+{% endblock content_login %}
