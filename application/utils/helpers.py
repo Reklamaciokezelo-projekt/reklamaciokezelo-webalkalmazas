@@ -29,36 +29,47 @@ def slugify(text):
     
     return text
 
-
+    
 # ----------------------------------------------------------------------
 # Adatbeviteli segédfüggvény: listaelem kiválasztása vagy új rekord létrehozása
 # ----------------------------------------------------------------------
 def get_or_create_dynamic(model, input_value):
     """
     Megkeresi a meglévő rekordot ID alapján,
-    vagy új objektumot készít szöveges bevitel esetén.
+    vagy új objektumot készít, ha az érték 'NEW_' prefixszel érkezik.
     """
     if not input_value:
         return None
     
-    try:
-        # --- Szám esetén: meglévő rekord lekérése ID alapján ---
-        obj_id = int(input_value)
-        return model.query.get(obj_id)
-    except (ValueError, TypeError):
-        # --- Szöveg esetén: új érték feldolgozása ---
-        new_display_name = input_value.strip()
+    # --- Új rekord létrehozása (frontend 'NEW_' prefix alapján) ---
+    if input_value.startswith('NEW_'):
+
+        # --- Prefix eltávolítása ---
+        new_display_name = input_value[4:].strip()
+        
+        if not new_display_name:
+            return None
+        
+        # --- Belső (slug) név generálása ---
         internal_name = slugify(new_display_name)
         
-        # --- Ellenőrzés: létezik-e már ilyen rekord ---
+        # --- Duplikáció ellenőrzése név alapján ---
         obj = model.query.filter_by(name=internal_name).first()
         
+        # --- Ha nem létezik, új objektum előkészítése ---
         if not obj:
-            # --- Új rekord előkészítése (commit nélkül) ---
             obj = model(name=internal_name, display_name=new_display_name)
             db.session.add(obj)
-        
+            
         return obj
+
+    # --- Meglévő rekord lekérése ID alapján ---
+    else:
+        try:
+            obj_id = int(input_value)
+            return model.query.get(obj_id)
+        except (ValueError, TypeError):
+            return None
     
 
 # ----------------------------------------------------------------------
