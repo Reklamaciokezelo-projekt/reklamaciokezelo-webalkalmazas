@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 {% block styles %}
 <style>
     .login-img {
@@ -6,6 +8,12 @@
         background-position: center right;
         min-height: 100vh; /* Fontos: teljes magasság */
     }
+        .logo-img {
+        max-width: 180px;
+    }
+</style>
+{% endblock styles %}
+
 
 {% block content_login %}
 <section class="vh-100 bg-white"> <div class="container-fluid h-100">
