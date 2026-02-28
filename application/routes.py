@@ -1,10 +1,10 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User, Reklamacio, Department, Customer, Product, DefectType, Status, Role, Position
 from application.forms import NewUserForm, LoginForm, UpdateUserForm, DeleteAccountForm, ChangePasswordForm, NewReklamacioForm, UpdateReklamacioForm, DeleteReklamation, ReportFilterForm
 from application.utils.auth_role import roles_required
-from application.utils.helpers import get_or_create_dynamic
+from application.utils.helpers import get_or_create_dynamic, get_dashboard_stats, HONAPOK_TELJES
 from sqlalchemy import func
 from datetime import date, timedelta, datetime
 from flask import send_file
@@ -18,7 +18,81 @@ from application.utils.pdf_generator import generate_report_pdf
 @app.route('/home')
 @login_required
 def home():
-    return render_template('index.html', title='Főoldal')
+    # --- Kiszervezett logika meghívása ---
+    count, cost, year_cost, return_count, monthly_data, dept_data = get_dashboard_stats()
+    
+    # --- Aktuális hónap sorszámának lekérése (1-12) és a listából a megfelelő név kiválasztása ---
+    # --- A listák indexelése 0-tól (month - 1) ---
+    now = datetime.now()
+    current_month_name = HONAPOK_TELJES[now.month - 1]
+
+    current_year = now.year
+    
+    # --- Változók átadása a sablonnak ---
+    return render_template('dashboard.html', 
+                         title='Áttekintés',
+                         current_month_count=count,
+                         current_month_cost=cost,
+                         current_year_cost=year_cost,
+                         current_return_count=return_count,
+                         current_month_name=current_month_name,
+                         current_year=current_year)
+
+
+# ----------------------------------------------------------------------
+# STATISZTIKAI API
+# ----------------------------------------------------------------------
+@app.route('/api/dashboard-stats')
+@login_required
+def dashboard_stats_api():
+    # --- Kiszervezett logika meghívása ---
+    count, cost, year_cost, return_count, monthly_data, dept_data = get_dashboard_stats()
+    
+    # --- Adatok visszaadása JSON formátumban ---
+    return jsonify({
+        'count': count,
+        'cost': cost,
+        'year_cost': year_cost,
+        'return_count': return_count,
+        'monthly_data': monthly_data,
+        'dept_data': dept_data
+    })
+
+
+# ----------------------------------------------------------------------
+# TÁBLÁZAT API
+# ----------------------------------------------------------------------
+@app.route('/api/recent-reklamaciok')
+@login_required
+def api_recent_reklamaciok():
+    # --- 5 legfrissebb reklamáció (dátum szerint rendezve) ---
+    recent_rekl = Reklamacio.query.order_by(
+        Reklamacio.complaint_date.desc(), 
+        Reklamacio.id.desc()
+    ).limit(5).all()
+    
+    # --- Lekért adatok JSON-kompatibilis alakítása ---
+    data = []
+    for r in recent_rekl:
+        data.append({
+            "id": r.id,
+            "date": r.complaint_date.strftime('%Y-%m-%d') if r.complaint_date else '-',
+            "customer": r.customer.display_name,
+            "product_name": r.product.display_name,
+            "product_id": r.product_identifier,
+            "defect": r.defect_type.display_name,
+            "quantity": r.quantity,
+            "status": r.status.name,
+            "complaint_number": r.complaint_number,
+            "department": r.department.display_name,
+            "requires_return": r.requires_return,
+            "shipping_date": r.shipping_date.strftime('%Y-%m-%d') if r.shipping_date else '-',
+            "cost": r.total_cost or 0,
+            "user": f"{r.user.surname} {r.user.forename}"
+        })
+        
+    # --- DataTables kompatibilis JSON válasz ---
+    return jsonify({"data": data})
 
     
 # ----------------------------------------------------------------------
@@ -120,7 +194,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             # --- Sikeres autentikáció → felhasználói fiók oldalra ---
-            return redirect(url_for('account'))
+            return redirect(url_for('home'))
         else:
             # --- Sikertelen próbálkozás visszajelzése ---
             flash("Sikertelen bejelentkezés. Hibás felhasználónév vagy jelszó", 'danger')
@@ -232,7 +306,7 @@ def update_user(user_id):
             return redirect(url_for('profiles'))
         except Exception as e:
             db.session.rollback()
-            flash("Hiba történt a módosítás során! (Adatbázis rollback)", "danger")
+            flash("Hiba történt a módosítás során!", "danger")
 
     # --- Űrlap feltöltése az adatbázis adataival (GET) ---
     elif request.method == 'GET':
@@ -432,7 +506,7 @@ def modosit_reklamacio(reklamacio_id):
         try:
             db.session.commit()
             flash(f"A {reklamacio.complaint_number} számú reklamáció sikeresen frissítve!", "success")
-            return redirect(url_for('reklamaciok')) # Feltételezem, van egy 'reklamaciok' listázó route-od
+            return redirect(url_for('reklamaciok'))
         except Exception as e:
             db.session.rollback()
             app.logger.error(f"Hiba a reklamáció módosításakor: {e}")

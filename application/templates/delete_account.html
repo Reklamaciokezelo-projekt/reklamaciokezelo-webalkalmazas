@@ -1,30 +1,43 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
 <div class="row justify-content-center mt-4">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 text-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
 
-        <h3 class="mb-3">Biztosan törölni szeretnéd a fiókot?</h3>
-        <p class="text-danger fw-semibold">
-            Ez a művelet nem visszavonható!
-        </p>
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5 text-center">
 
-        <p class="mb-4">
-            <strong>{{ user.surname }} {{ user.forename }}</strong>
-            <br>
-            <span class="text-muted">{{ user.username }}</span>
-        </p>
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex justify-content-center align-items-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                    <i class="bi bi-exclamation-triangle-fill fs-1"></i>
+                </div>
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
+                <h3 class="mb-3 fw-bold text-gray-800">Fiók törlése</h3>
+                
+                <p class="text-danger fw-semibold mb-4">
+                    Biztosan törölni szeretnéd ezt a fiókot? <br>
+                    <span class="fw-normal">Ez a művelet végleges és nem visszavonható!</span>
+                </p>
 
-            <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
-                {{ form.submit(class="btn btn-danger px-4") }}
-                <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4">
-                    Mégse
-                </a>
+                <div class="bg-light border border-secondary-subtle rounded-3 p-3 mb-4 mx-auto" style="max-width: 300px;">
+                    <span class="d-block fw-bold fs-5 text-dark">{{ user.surname }} {{ user.forename }}</span>
+                    <span class="text-muted small"><i class="bi bi-person me-1"></i>{{ user.username }}</span>
+                </div>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4 fw-medium">
+                            Mégse
+                        </a>
+                        <button type="submit" class="btn btn-danger px-4 shadow-sm fw-medium">
+                            <i class="bi bi-trash3-fill me-1"></i> Törlés
+                        </button>
+                    </div>
+                </form>
+
             </div>
-        </form>
+        </div>
 
     </div>
 </div>
