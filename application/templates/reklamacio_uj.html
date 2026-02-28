@@ -1,0 +1,211 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.4/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-lg-10 col-xl-8">
+
+        <h2 class="text-center mb-4">Új reklamáció rögzítése</h2>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                
+                <form action="{{ url_for('uj_reklamacio') }}" method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <h5 class="text-secondary border-bottom pb-2 mb-3">Alapadatok</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.complaint_date.label(class="form-label") }}
+                            {{ form.complaint_date(class="form-control" + (" is-invalid" if form.complaint_date.errors else ""), type="date") }}
+                            {% if form.complaint_date.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.complaint_date.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.complaint_number.label(class="form-label") }}
+                            {{ form.complaint_number(class="form-control" + (" is-invalid" if form.complaint_number.errors else ""), placeholder="pl. REK-2024/001") }}
+                            {% if form.complaint_number.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.complaint_number.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.department.label(class="form-label") }}
+                            {{ form.department(class="form-select", id="department-select") }}
+                            {% if form.department.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.department.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        
+                    </div>
+
+                    <h5 class="text-secondary border-bottom pb-2 mb-3 mt-4">Termék és Vevő adatok</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                        {{ form.customer.label(class="form-label") }}
+                        {{ form.customer(class="form-select", id="customer-select") }}
+                        {% if form.customer.errors %}
+                            <div class="text-danger small">
+                                {% for error in form.customer.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.product.label(class="form-label") }}
+                            {{ form.product(class="form-select", id="product-select") }}
+                            {% if form.product.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.product.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.product_identifier.label(class="form-label") }}
+                            {{ form.product_identifier(class="form-control" + (" is-invalid" if form.product_identifier.errors else "")) }}
+                            {% if form.product_identifier.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.product_identifier.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.defect_type.label(class="form-label") }}
+                            {{ form.defect_type(class="form-select", id="defect-select") }}
+                            {% if form.defect_type.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.defect_type.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.quantity.label(class="form-label") }}
+                            {{ form.quantity(class="form-control" + (" is-invalid" if form.quantity.errors else "")) }}
+                            {% if form.quantity.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.quantity.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.total_cost.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.total_cost(class="form-control" + (" is-invalid" if form.total_cost.errors else "")) }}
+                                <span class="input-group-text">Ft</span>
+                            </div>
+                             {% if form.total_cost.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.total_cost.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=3) }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.description.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <h5 class="text-secondary border-bottom pb-2 mb-3 mt-4">Logisztika</h5>
+                    
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-3">
+                            {{ form.shipping_date.label(class="form-label") }}
+                            {{ form.shipping_date(class="form-control" + (" is-invalid" if form.shipping_date.errors else ""), type="date") }}
+                            {% if form.shipping_date.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.shipping_date.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3 ps-md-5">
+                            <div class="form-check form-switch pt-md-4">
+                                {{ form.requires_return(class="form-check-input") }}
+                                {{ form.requires_return.label(class="form-check-label") }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.status.label(class="form-label") }}
+                            {{ form.status(class="form-select", id="status-select") }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.status.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        {{ form.submit(class="btn btn-primary px-4") }}
+                        <a href="{{ url_for('reklamaciok') }}" class="btn btn-outline-secondary px-4">
+                            Mégse
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+            <div id="localSuccessToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-success text-white">
+                    <strong class="me-auto">Rendszerüzenet</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                    <span id="localToastMessage"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.4/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.4/dist/js/tom-select.complete.min.js"></script>
+<script src="{{ url_for('static', filename='js/dynamic_select.js') }}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        // Paraméterek: (ID, Placeholder szöveg)
+        initDynamicSelect('department-select', 'Válassz vagy írj be új üzemegységet...', true);
+        initDynamicSelect('customer-select', 'Válassz vagy írj be új vevőt...', true);
+        initDynamicSelect('product-select', 'Válassz vagy írj be új terméket...', true);
+        initDynamicSelect('defect-select', 'Válassz vagy írj be új hiba típust...', true);
+        initDynamicSelect('status-select', 'Válassz státuszt vagy írj be újat...', true);
+
+    });
+</script>
+{% endblock scripts %}
