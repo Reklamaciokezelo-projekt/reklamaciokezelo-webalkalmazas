@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- REKLAMÁCIÓ TÖRLÉSE -->
 <div class="row justify-content-center mt-4">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
 
+        <!-- Tartalom kártya -->
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4 p-md-5 text-center">
 
@@ -13,29 +15,39 @@
 
                 <h3 class="mb-3 fw-bold text-gray-800">Reklamáció törlése</h3>
                 
+                <!-- Figyelmeztető szöveg -->
                 <p class="text-danger fw-semibold mb-4">
                     Biztosan törölni szeretnéd ezt a reklamációt? <br>
                     <span class="fw-normal">Ez a művelet végleges és nem visszavonható!</span>
                 </p>
 
+                <!-- A törlendő rekord azonosító adatai -->
                 <div class="bg-light border border-secondary-subtle rounded-3 p-4 mb-4 mx-auto text-start" style="max-width: 350px;">
+                    
+                    <!-- Reklamáció száma -->
                     <div class="mb-3">
                         <span class="text-muted small fw-medium d-block mb-1">Reklamáció száma</span>
                         <span class="fw-bold fs-5 text-danger">{{ reklamacio.complaint_number }}</span>
                     </div>
+
+                    <!-- Vevő neve -->
                     <div class="mb-3">
                         <span class="text-muted small fw-medium d-block mb-1">Vevő</span>
                         <span class="fw-medium text-dark">{{ reklamacio.customer.display_name if reklamacio.customer else 'Nincs megadva' }}</span>
                     </div>
+
+                    <!-- Termék azonosítója -->
                     <div>
                         <span class="text-muted small fw-medium d-block mb-1">Cikkszám</span>
                         <span class="text-dark">{{ reklamacio.product_identifier }}</span>
                     </div>
                 </div>
 
+                <!-- Törlési folyamat indítása (POST) -->
                 <form method="POST">
                     {{ form.hidden_tag() }}
 
+                    <!-- Műveleti gombok -->
                     <div class="d-flex justify-content-center gap-3 mt-4">
                         <a href="{{ url_for('reklamaciok') }}" class="btn btn-outline-secondary px-4 fw-medium">
                             Mégse
