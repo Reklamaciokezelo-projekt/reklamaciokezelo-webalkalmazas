@@ -105,7 +105,7 @@ def api_recent_reklamaciok():
 def register():
     form = NewUserForm()
 
-    # --- SelecField-ek feltöltése (ID és Név párok) ---
+    # --- SelecField-ek feltöltése ---
     positions = Position.query.order_by(Position.display_name).all()
     form.position.choices = [(str(p.id), p.display_name) for p in positions]
 
@@ -147,9 +147,18 @@ def register():
             flash(f"{user.surname} {user.forename} felhasználó sikeresen hozzáadva!", "success")
             return redirect(url_for('profiles'))
         except Exception as e:
+
+            # --- Hiba esetén adatbázis rollback ---
             db.session.rollback()
+            app.logger.error(f"Adatbázis hiba regisztráció során: {e}")
             flash("Hiba történt a mentés során! (Adatbázis rollback lefutott)", "danger")
-            
+            return render_template('register.html', title="Felhasználói fiók létrehozása", form=form), 500
+        
+    # --- Validációs hiba esetén 422-es Unprocessable Entity ---
+    if request.method == 'POST':
+        return render_template("register.html", form=form, user=user), 422
+
+    # --- Alapértelmezett GET ág ---     
     return render_template('register.html', title="Felhasználói fiók létrehozása", form=form)
 
 
@@ -183,21 +192,20 @@ def login():
         # --- Felhasználó lekérése email alapján ---
         user = User.query.filter_by(email=form.email.data).first()
 
-        # --- Hibakeresés ---
-        """ print(f"Beírt email: {form.email.data}")
-        print(f"Talált felhasználó: {user}")
-        if user:
-            is_valid = bcrypt.check_password_hash(user.password, form.password.data)
-            print(f"Jelszó egyezik: {is_valid}") """
-
         # --- Jelszó ellenőrzés és beléptetés ---
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            # --- Sikeres autentikáció → felhasználói fiók oldalra ---
             return redirect(url_for('home'))
         else:
             # --- Sikertelen próbálkozás visszajelzése ---
-            flash("Sikertelen bejelentkezés. Hibás felhasználónév vagy jelszó", 'danger')
+            flash("Sikertelen bejelentkezés. Hibás e-mail cím vagy jelszó", 'danger')
+            return render_template('login.html', title='Bejelentkezés', form=form), 401
+        
+    # --- Validációs hiba esetén 422-es Unprocessable Entity ---
+    if request.method == 'POST':
+        return render_template('login.html', title='Bejelentkezés', form=form), 422
+    
+    # --- Alapértelmezett GET ág ---
     return render_template('login.html', title='Bejelentkezés', form=form)
 
 
@@ -253,13 +261,28 @@ def change_password():
             current_user.password = hashed_pw
 
             # --- Tranzakció lezárása ---
-            db.session.commit()
-            flash('A jelszó sikeresen módosult.', 'success')
-            return redirect(url_for('account'))
-        else:
-            # --- Hibaüzenet hibás hitelesítés esetén ---
-            flash('A megadott jelenlegi jelszó hibás.', 'danger')
+            try:
+                db.session.commit()
+                flash('A jelszó sikeresen módosult.', 'success')
+                return redirect(url_for('account'))
+            except Exception as e:
 
+                # --- Hiba esetén adatbázis rollback ---
+                db.session.rollback()
+                app.logger.error(f"Adatbázis hiba jelszómódosításnál (User ID: {current_user.id}): {e}")
+                flash('Hiba történt a jelszó mentése során! Kérjük, próbálja újra.', 'danger')
+                return render_template('change_password.html', form=form), 500
+        else:
+            
+            # --- Hibaüzenet hibás hitelesítés esetén (401 Unauthorized) ---
+            flash('A megadott jelenlegi jelszó hibás.', 'danger')
+            return render_template('change_password.html', form=form), 401
+        
+    # --- Validációs hiba esetén 422-es Unprocessable Entity ---
+    if request.method == 'POST':
+        return render_template('change_password.html', form=form), 422
+
+    # --- Alapértelmezett GET ág ---
     return render_template('change_password.html', form=form)
 
 
@@ -305,8 +328,12 @@ def update_user(user_id):
             flash(f"{user.surname} {user.forename} adatai sikeresen frissítve!", "success")
             return redirect(url_for('profiles'))
         except Exception as e:
+
+            # --- Hiba esetén adatbázis rollback ---
             db.session.rollback()
-            flash("Hiba történt a módosítás során!", "danger")
+            app.logger.error(f"Adatbázis hiba a felhasználó (ID: {user_id}) módosításakor: {e}")
+            flash("Hiba történt a módosítás során! (Adatbázis rollback lefutott)", "danger")
+            return render_template("update_user.html", form=form, user=user), 500
 
     # --- Űrlap feltöltése az adatbázis adataival (GET) ---
     elif request.method == 'GET':
@@ -320,6 +347,11 @@ def update_user(user_id):
         if user.position:
             form.position.data = str(user.position.id)
 
+    # --- Validációs hiba esetén 422-es Unprocessable Entity ---
+    if request.method == 'POST':
+        return render_template("update_user.html", form=form, user=user), 422
+    
+    # --- Alapértelmezett GET ág ---
     return render_template("update_user.html", form=form, user=user)
 
 
@@ -352,6 +384,7 @@ def delete_account(user_id):
             flash("A fiók sikeresen törölve.", "info")
             return redirect(url_for('profiles'))
 
+    # --- Alapértelmezett GET ág ---
     return render_template('delete_account.html', form=form, user=user)
 
 
@@ -415,16 +448,22 @@ def uj_reklamacio():
             # --- Tranzakció lezárása ---
             db.session.add(uj_reklamacio)
             db.session.commit()
-            
             flash(f"A {uj_reklamacio.complaint_number} számú reklamáció sikeresen rögzítve!", "success")
             return redirect(url_for('reklamaciok'))
 
         except Exception as e:
+
             # --- Hiba esetén adatbázis rollback ---
             db.session.rollback()
             app.logger.error(f"Hiba a reklamáció mentésekor: {e}")
             flash("Hiba történt az adatbázis mentése során. Kérjük, próbálja újra.", "danger")
+            return render_template('reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form), 500
 
+    # --- Validációs hiba esetén 422-es Unprocessable Entity ---
+    if request.method == 'POST':
+        return render_template('reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form), 422
+
+    # --- Alapértelmezett GET ág ---
     return render_template('reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form)
 
 
@@ -508,9 +547,12 @@ def modosit_reklamacio(reklamacio_id):
             flash(f"A {reklamacio.complaint_number} számú reklamáció sikeresen frissítve!", "success")
             return redirect(url_for('reklamaciok'))
         except Exception as e:
+
+            # --- Hiba esetén adatbázis rollback ---
             db.session.rollback()
-            app.logger.error(f"Hiba a reklamáció módosításakor: {e}")
+            app.logger.error(f"Hiba a(z) {reklamacio_id}. ID-jú reklamáció módosításakor: {e}")
             flash("Hiba történt a módosítás során! (Adatbázis rollback)", "danger")
+            return render_template("update_rekl.html", form=form, reklamacio=reklamacio), 500
 
     # --- Űrlap feltöltése az adatbázis adataival (GET) ---
     elif request.method == 'GET':
@@ -535,6 +577,11 @@ def modosit_reklamacio(reklamacio_id):
         if reklamacio.status:
             form.status.data = str(reklamacio.status.id)
 
+    # --- Validációs hiba esetén 422-es Unprocessable Entity ---
+    if request.method == 'POST':
+        return render_template("update_rekl.html", form=form, reklamacio=reklamacio), 422
+
+    # --- Alapértelmezett GET ág ---
     return render_template("update_rekl.html", form=form, reklamacio=reklamacio)
 
 
@@ -566,7 +613,6 @@ def torol_reklamacio(reklamacio_id):
 # ----------------------------------------------------------------------
 # RIPORTOK ÉS STATISZTIKÁK
 # - Csak super_user
-# - Chart.js adatok előkészítése (PostgreSQL kompatibilis)
 # ----------------------------------------------------------------------
 @app.route('/reports', methods=['GET', 'POST'])
 @login_required
@@ -644,15 +690,38 @@ def reports():
         if query:
             results = query.filter(Reklamacio.complaint_date.between(start, end)).all()
 
+            # --- Nulla-feltöltés a havi statisztikákhoz ---
+            if group_criterion in ['monthly_cost', 'monthly_count']:
+                # --- Szótár az SQL eredményekből a gyors kereséshez ---
+                result_dict = {str(row[0]): (float(row[1]) if row[1] is not None else 0) for row in results}
+
+                # --- Kezdő és végdátum ---
+                current_date = date(start.year, start.month, 1)
+                end_date_limit = date(end.year, end.month, 1)
+
+                while current_date <= end_date_limit:
+                    month_str = current_date.strftime('%Y-%m')
+                    chart_labels.append(month_str)
+                    
+                    # --- Ha van adat a szótárban bekerül, ha nincs, akkor 0.0 kerül be ---
+                    chart_values.append(result_dict.get(month_str, 0.0))
+
+                    # --- Léptetés a következő hónapra ---
+                    if current_date.month == 12:
+                        current_date = date(current_date.year + 1, 1, 1)
+                    else:
+                        current_date = date(current_date.year, current_date.month + 1, 1)
+
             # --- Adatok szétválogatása a Chart.js számára ---
-            for row in results:
-                # --- row[0]: Kategória név vagy Hónap ---
-                # --- row[1]: Darabszám vagy Összeg ---
-                chart_labels.append(str(row[0]) if row[0] else "Nincs adat")
-                
-                # --- Biztonságos típuskonverzió: ha a sum() None-t adna vissza, legyen 0 ---
-                val = row[1] if row[1] is not None else 0
-                chart_values.append(float(val))
+            else:
+                for row in results:
+                    # --- row[0]: Kategória név vagy Hónap ---
+                    # --- row[1]: Darabszám vagy Összeg ---
+                    chart_labels.append(str(row[0]) if row[0] else "Nincs adat")
+                    
+                    # --- Biztonságos típuskonverzió: ha a sum() None-t adna vissza, legyen 0 ---
+                    val = row[1] if row[1] is not None else 0
+                    chart_values.append(float(val))
 
     return render_template('reports.html', 
                            form=form, 
@@ -736,12 +805,36 @@ def download_report_pdf():
     labels = []
     values = []
     
+    # --- Lekérdezés futtatása és szűrés ---
     if query:
         results = query.filter(Reklamacio.complaint_date.between(start, end)).all()
-        for row in results:
-            labels.append(str(row[0]) if row[0] else "Nincs adat")
-            val = row[1] if row[1] is not None else 0
-            values.append(float(val))
+        
+        # --- Nulla-feltöltés a havi statisztikákhoz ---
+        if group_criterion in ['monthly_cost', 'monthly_count']:
+
+            # --- Szótár az SQL eredményekből a gyors kereséshez ---
+            result_dict = {str(row[0]): (float(row[1]) if row[1] is not None else 0) for row in results}
+
+            # --- Kezdő és végdátum ---
+            current_date = date(start.year, start.month, 1)
+            end_date_limit = date(end.year, end.month, 1)
+
+            while current_date <= end_date_limit:
+                month_str = current_date.strftime('%Y-%m')
+                labels.append(month_str)
+                values.append(result_dict.get(month_str, 0.0))
+
+                if current_date.month == 12:
+                    current_date = date(current_date.year + 1, 1, 1)
+                else:
+                    current_date = date(current_date.year, current_date.month + 1, 1)
+        
+        # --- Többi szűréshez (nem havi) ---
+        else:
+            for row in results:
+                labels.append(str(row[0]) if row[0] else "Nincs adat")
+                val = row[1] if row[1] is not None else 0
+                values.append(float(val))
 
     # --- PDF generálása és küldése ---
     if not labels:

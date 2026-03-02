@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DGA Manager</title>
     
+    <!-- Bootstrap és DataTables stíluslapok betöltése -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     
+    <!-- Egyedi oldalstílusok (CSS) dinamikus beillesztésének helye -->
     {% block styles %}{% endblock %}
 </head>
 <body>
@@ -91,12 +93,14 @@
                     <!-- Navigációs linkek jogosultságkezeléssel -->
                     <ul class="nav nav-pills flex-column flex-md-row gap-2">
 
+                        <!-- Áttekintés (Kezdőlap) menüpont -->
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'home' }}" href="{{ url_for('home') }}">
                                 <i class="bi bi-house"></i> Áttekintés
                             </a>
                         </li>
 
+                        <!-- Reklamációk menüpont -->
                         {% if current_user.role.name in ['user', 'super_user'] %}
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'reklamaciok' }}" href="{{ url_for('reklamaciok') }}">
@@ -105,6 +109,7 @@
                         </li>
                         {% endif %}
 
+                        <!-- Kimutatások menüpont -->
                         {% if current_user.role.name in ['user', 'super_user'] %}
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'reports' }}" href="{{ url_for('reports') }}">
@@ -113,6 +118,7 @@
                         </li>
                         {% endif %}
                         
+                        <!-- Felhasználók kezelése menüpont (admin) -->
                         {% if current_user.role.name == 'admin' %}
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'profiles' }}" href="{{ url_for('profiles') }}">

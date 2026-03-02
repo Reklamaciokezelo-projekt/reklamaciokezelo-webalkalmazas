@@ -73,14 +73,14 @@ class UpdateUserForm(FlaskForm):
         self.original_username = original_username
         self.original_email = original_email
 
-    # --- Egyedi validátor: Felhasználónév (csak változás esetén ellenőriz) ---
+    # --- Egyedi validátor: Felhasználónév (csak változás esetén) ---
     def validate_username(self, username):
         if username.data != self.original_username:
             user = User.query.filter_by(username=username.data).first()
             if user:
                 raise ValidationError("Ez a felhasználónév már foglalt, adjon meg másikat")
             
-    # --- Egyedi validátor: Email cím (csak változás esetén ellenőriz) ---
+    # --- Egyedi validátor: Email cím (csak változás esetén) ---
     def validate_email(self, email):  
         if email.data != self.original_email:
             user = User.query.filter_by(email=email.data).first()
