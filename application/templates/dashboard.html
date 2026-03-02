@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 <!-- Oldal cím  -->
@@ -233,7 +232,7 @@
             }
         });
         
-        // --- AJAX Lekérdezések ---
+        // --- AJAX Lekérdezések (kártyák és grafikonok adatainak frissítése) ---
         function updateDashboard() {
             $.ajax({
                 url: '/api/dashboard-stats',
@@ -287,6 +286,7 @@
                     const deptData = data.dept_data;
                     const deptList = $('#department-list');
                     deptList.empty();
+                    
                     if (deptData && deptData.length > 0) {
                         deptData.forEach(function(dept) {
                             const listItem = `
