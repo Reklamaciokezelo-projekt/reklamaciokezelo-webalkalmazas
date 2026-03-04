@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- FELHASZNÁLÓI FIÓK TÖRLÉSE -->
 <div class="row justify-content-center mt-4">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
 
+        <!-- Tartalom kártya -->
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4 p-md-5 text-center">
 
@@ -13,19 +15,23 @@
 
                 <h3 class="mb-3 fw-bold text-gray-800">Fiók törlése</h3>
                 
+                <!-- Figyelmeztető szöveg -->
                 <p class="text-danger fw-semibold mb-4">
                     Biztosan törölni szeretnéd ezt a fiókot? <br>
                     <span class="fw-normal">Ez a művelet végleges és nem visszavonható!</span>
                 </p>
 
+                <!-- A törlésre kijelölt felhasználói fiók (név) -->
                 <div class="bg-light border border-secondary-subtle rounded-3 p-3 mb-4 mx-auto" style="max-width: 300px;">
                     <span class="d-block fw-bold fs-5 text-dark">{{ user.surname }} {{ user.forename }}</span>
                     <span class="text-muted small"><i class="bi bi-person me-1"></i>{{ user.username }}</span>
                 </div>
 
+                <!-- Törlési folyamat indítása (POST) -->
                 <form method="POST">
                     {{ form.hidden_tag() }}
 
+                    <!-- Műveleti gombok -->
                     <div class="d-flex justify-content-center gap-3 mt-4">
                         <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4 fw-medium">
                             Mégse

@@ -20,11 +20,11 @@ def slugify(text):
     """
     if not text:
         return ""
-    # -- Ékezetek eltávolítása --
+    # --- Ékezetek eltávolítása ---
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
-    # -- Kisbetű és felesleges szóközök levágása a szélekről --
+    # --- Kisbetű és felesleges szóközök levágása a szélekről ---
     text = text.lower().strip()
-    # -- Minden törlése, ami nem betű vagy szám (speciális karakterek és szóközök) --
+    # --- Minden törlése, ami nem betű vagy szám (speciális karakterek és szóközök) ---
     text = re.sub(r'[^a-z0-9]', '', text)
     
     return text
