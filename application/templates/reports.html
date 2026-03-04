@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- KIMUTATÁSOK KÉSZÍTÉSE -->
 <div class="container mt-4">
     <h2 class="text-center mb-4">Reklamációs Statisztikák</h2>
 
+    <!-- Szűrőpanel -->
     <div class="card shadow-sm mb-5">
         <div class="card-body">
             <form method="POST" class="row g-3 align-items-end">
@@ -32,6 +34,7 @@
         </div>
     </div>
 
+    <!-- Flask változók átadása a JavaScriptnek (bridge) -->
     <div id="chart-data-bridge" 
         data-labels='{{ labels | tojson }}' 
         data-values='{{ values | tojson }}' 
@@ -40,6 +43,7 @@
         style="display: none;">
     </div>
 
+    <!-- PDF export form -->
     <form action="{{ url_for('download_report_pdf') }}" method="POST" style="display: inline;" id="pdfDownloadForm">
         {{ form.hidden_tag() }}
         <input type="hidden" name="start_date" value="{{ form.start_date.data }}">
@@ -54,6 +58,7 @@
         </button>
     </form>
 
+    <!-- Grafikon kártya -->
     <div class="card shadow">
         <div class="card-body">
             {% if labels|length > 0 %}
@@ -82,22 +87,28 @@
 
 {% block scripts %}
 {{ super() }}
+
+<!-- Chart js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+
+        // --- Adatok átvétele (bridge) ---
         const bridge = document.getElementById('chart-data-bridge');
         if (!bridge) return;
 
+        // --- Adatok JSON formátumból JavaScript listákká/objektumokká alakítása ---
         const labels = JSON.parse(bridge.dataset.labels);
         const values = JSON.parse(bridge.dataset.values);
         const chartType = bridge.dataset.type;
         const criterion = bridge.dataset.criterion;
 
+        // --- Pénzösszeg vagy darabszám megjelenítése ---
         const isCost = criterion === 'monthly_cost';
         const labelText = isCost ? 'Összesített költség (HUF)' : 'Reklamációk száma';
         
-        // Színpaletták
+        // --- Színpaletták ---
         const paletteBackground = [
             'rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)',
             'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
@@ -115,9 +126,11 @@
 
         if (labels.length === 0) return;
 
+        // --- Legnagyobb érték a skálázáshoz ---
         const maxValue = values.length > 0 ? Math.max(...values) : 0;
         const ctx = document.getElementById('myChart').getContext('2d');
 
+        // --- Chart.js inicializálása ---
         let myChart = new Chart(ctx, {
             type: chartType,
             data: {
@@ -129,7 +142,9 @@
                     tension: 0.3,
                     backgroundColor: chartBg,
                     borderColor: chartBorder,
-                    borderWidth: 1
+                    borderRadius: chartType === 'bar' ? 6 : 0,
+                    maxBarThickness: chartType === 'bar' ? 100 : null,
+                    borderWidth: chartType === 'bar' ? 0 : 2
                 }]
             },
             options: {
@@ -141,6 +156,8 @@
                             label: function(context) {
                                 let val = context.raw;
                                 if (isCost) {
+
+                                    // --- HUF formátum ---
                                     return context.dataset.label + ': ' + new Intl.NumberFormat('hu-HU').format(val) + ' Ft';
                                 }
                                 return context.dataset.label + ': ' + val + ' db';
@@ -148,16 +165,20 @@
                         }
                     },
                     legend: {
-                        display: isPie,
+                        display: isPie, // --- Jelmagyarázat csak kördiagramnál ---
                         position: 'top'
                     }
                 },
+
+                // --- Tengelyek beállítása ---
                 scales: isPie ? {} : {
                     y: {
                         type: 'linear',
                         beginAtZero: true,
                         suggestedMax: isCost ? undefined : maxValue + 1,
                         ticks: {
+
+                            // --- Egész szám a skálán, ha darabszámról van szó (nincs 1.5 reklamáció) ---
                             stepSize: isCost ? undefined : 1,
                             callback: function(value) {
                                 if (isCost) {
@@ -171,7 +192,7 @@
             }
         });
 
-        // --- KAPCSOLÓ KEZELÉSE ÉS SZINKRONIZÁLÁSA A PDF FORM-MAL ---
+        // --- Logaritmikus v Lineáris ---
         const logSwitch = document.getElementById('logScaleSwitch');
         const hiddenLogInput = document.getElementById('hiddenLogScale');
         
@@ -184,16 +205,20 @@
                 const isLog = this.checked;
                 const scaleType = isLog ? 'logarithmic' : 'linear';
                 
-                // Chart.js frissítése
+                // --- Chart.js frissítése ---
                 myChart.options.scales.y.type = scaleType;
+
+                // --- Logaritmikus skálánál a 0 hibaérték miatt 0.1-re különben hibát (vagy üres grafikont) dobna ---
                 if (scaleType === 'logarithmic') {
                     myChart.options.scales.y.min = isCost ? undefined : 0.1; 
                 } else {
                     myChart.options.scales.y.min = 0; 
                 }
+
+                // --- Grafikon újrarajzolása az új beállításokkal ---
                 myChart.update();
 
-                // Rejtett mező frissítése a form-ban
+                // --- Rejtett mező frissítése a form-ban ---
                 hiddenLogInput.value = isLog ? "true" : "false";
             });
         }
