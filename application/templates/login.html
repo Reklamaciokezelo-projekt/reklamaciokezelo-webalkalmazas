@@ -11,7 +11,8 @@
         background-position: center right;
         min-height: 100vh;
     }
-        .logo-img {
+
+    .logo-img {
         max-width: 180px;
     }
 </style>
@@ -19,9 +20,10 @@
 
 
 {% block content_login %}
-<section class="vh-100 bg-white"> <div class="container-fluid h-100">
+<section class="vh-100 bg-white">
+    <div class="container-fluid h-100">
         <div class="row h-100">
-            
+
             <!-- Bal oldali oszlop -->
             <div class="col-lg-6 d-flex align-items-center justify-content-center">
                 <div class="w-100" style="max-width: 420px;">
@@ -29,14 +31,14 @@
                     <!-- Flash üzenetek -->
                     <div class="col-md-12 mt-2">
                         {% with messages = get_flashed_messages(with_categories = true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">    
-                                        {{ message }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                         {% endwith %}
                     </div>
 
@@ -50,17 +52,17 @@
                         {{ form.hidden_tag() }}
 
                         <h3 class="fw-normal text-center mb-4">Bejelentkezés</h3>
-                        
+
                         <!-- Email beviteli mező -->
                         <div>
                             {{ form.email.label(class="form-label") }}
                             {% if form.email.errors %}
-                                {{ form.email(class="form-control is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.email.errors %} {{ error }} {% endfor %}
-                                </div>
+                            {{ form.email(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %} {{ error }} {% endfor %}
+                            </div>
                             {% else %}
-                                {{ form.email(class="form-control") }}
+                            {{ form.email(class="form-control") }}
                             {% endif %}
                         </div>
 
@@ -68,12 +70,12 @@
                         <div>
                             {{ form.password.label(class="form-label") }}
                             {% if form.password.errors %}
-                                {{ form.password(class="form-control is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.password.errors %} {{ error }} {% endfor %}
-                                </div>
+                            {{ form.password(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %} {{ error }} {% endfor %}
+                            </div>
                             {% else %}
-                                {{ form.password(class="form-control") }}
+                            {{ form.password(class="form-control") }}
                             {% endif %}
                         </div>
 
@@ -83,19 +85,20 @@
                                 {{ form.remember(class="form-check-input me-2") }}
                                 {{ form.remember.label(class="form-check-label") }}
                             </div>
-                            <a href="#" class="text-muted small">Elfelejtetted a jelszót?</a>
+                            <a href="{{ url_for('forgot_password') }}" class="text-muted small">Elfelejtetted a
+                                jelszót?</a>
                         </div>
 
                         <!-- Bejelentkezés gomb -->
                         {{ form.submit(class="btn btn-info btn-lg text-white w-100") }}
                     </form>
-                    
+
                 </div>
             </div>
 
             <!-- Jobb oldali oszlop -->
             <div class="col-lg-6 d-none d-lg-block login-img p-0"></div>
-            
+
         </div>
     </div>
 </section>
