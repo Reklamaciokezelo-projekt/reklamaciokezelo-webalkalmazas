@@ -10,7 +10,7 @@
         <div class="card-body">
             <form method="POST" class="row g-3 align-items-end">
                 {{ form.hidden_tag() }}
-                
+
                 <div class="col-md-2">
                     {{ form.start_date.label(class="form-label") }}
                     {{ form.start_date(class="form-control", type="date") }}
@@ -35,12 +35,8 @@
     </div>
 
     <!-- Flask változók átadása a JavaScriptnek (bridge) -->
-    <div id="chart-data-bridge" 
-        data-labels='{{ labels | tojson }}' 
-        data-values='{{ values | tojson }}' 
-        data-type='{{ chart_type }}'
-        data-criterion='{{ form.group_by.data }}'
-        style="display: none;">
+    <div id="chart-data-bridge" data-labels='{{ labels | tojson }}' data-values='{{ values | tojson }}'
+        data-type='{{ chart_type }}' data-criterion='{{ form.group_by.data }}' style="display: none;">
     </div>
 
     <!-- PDF export form -->
@@ -49,35 +45,79 @@
         <input type="hidden" name="start_date" value="{{ form.start_date.data }}">
         <input type="hidden" name="end_date" value="{{ form.end_date.data }}">
         <input type="hidden" name="group_by" value="{{ form.group_by.data }}">
-        
+
         <input type="hidden" name="chart_type" value="{{ form.chart_type.data }}">
         <input type="hidden" name="log_scale" id="hiddenLogScale" value="false">
-    
+
         <button type="submit" class="btn btn-danger mb-3">
             <i class="fas fa-file-pdf"></i> Letöltés PDF-ben
         </button>
     </form>
 
+    <!-- Küldés e-mailben gomb -->
+    <button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
+        data-bs-target="#sendEmailModal" {% if not labels %}disabled title="Először generálj riportot" {% endif %}>
+        <i class="fas fa-envelope"></i> Küldés e-mailben
+    </button>
+
+    <!-- E-mail küldés modal -->
+    <div class="modal fade" id="sendEmailModal" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendEmailModalLabel">
+                        <i class="fas fa-envelope me-2"></i>Riport küldése e-mailben
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ url_for('send_report_email_route') }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="modal-body">
+                        <p class="text-muted small">A jelenlegi riport PDF-ként kerül elküldésre a megadott e-mail
+                            címre.</p>
+                        <div class="mb-3">
+                            <label for="recipient_email" class="form-label">Címzett e-mail címe</label>
+                            <input type="email" name="recipient_email" id="recipient_email" class="form-control"
+                                placeholder="pelda@email.hu" required>
+                        </div>
+                        <!-- Rejtett mezők a riport paramétereihez -->
+                        <input type="hidden" name="start_date" value="{{ form.start_date.data }}">
+                        <input type="hidden" name="end_date" value="{{ form.end_date.data }}">
+                        <input type="hidden" name="group_by" value="{{ form.group_by.data }}">
+                        <input type="hidden" name="chart_type" value="{{ form.chart_type.data }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Küldés
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Grafikon kártya -->
     <div class="card shadow">
         <div class="card-body">
             {% if labels|length > 0 %}
-                
-                <div class="d-flex justify-content-end mb-2">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="logScaleSwitch">
-                        <label class="form-check-label" for="logScaleSwitch">Logaritmikus skála</label>
-                    </div>
-                </div>
 
-                <div class="chart-container" style="position: relative; height: 50vh; max-height: 450px; width: 100%;">
-                    <canvas id="myChart"></canvas>
+            <div class="d-flex justify-content-end mb-2">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="logScaleSwitch">
+                    <label class="form-check-label" for="logScaleSwitch">Logaritmikus skála</label>
                 </div>
+            </div>
+
+            <div class="chart-container" style="position: relative; height: 50vh; max-height: 450px; width: 100%;">
+                <canvas id="myChart"></canvas>
+            </div>
 
             {% else %}
-                <div class="text-center text-muted py-5">
-                    <p>Nincs megjeleníthető adat a kiválasztott időszakban.</p>
-                </div>
+            <div class="text-center text-muted py-5">
+                <p>Nincs megjeleníthető adat a kiválasztott időszakban.</p>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -92,7 +132,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
         // --- Adatok átvétele (bridge) ---
         const bridge = document.getElementById('chart-data-bridge');
@@ -107,7 +147,7 @@
         // --- Pénzösszeg vagy darabszám megjelenítése ---
         const isCost = criterion === 'monthly_cost';
         const labelText = isCost ? 'Összesített költség (HUF)' : 'Reklamációk száma';
-        
+
         // --- Színpaletták ---
         const paletteBackground = [
             'rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)',
@@ -149,11 +189,11 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, 
+                maintainAspectRatio: false,
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let val = context.raw;
                                 if (isCost) {
 
@@ -180,7 +220,7 @@
 
                             // --- Egész szám a skálán, ha darabszámról van szó (nincs 1.5 reklamáció) ---
                             stepSize: isCost ? undefined : 1,
-                            callback: function(value) {
+                            callback: function (value) {
                                 if (isCost) {
                                     return new Intl.NumberFormat('hu-HU', { notation: "compact" }).format(value) + ' Ft';
                                 }
@@ -195,24 +235,24 @@
         // --- Logaritmikus v Lineáris ---
         const logSwitch = document.getElementById('logScaleSwitch');
         const hiddenLogInput = document.getElementById('hiddenLogScale');
-        
+
         if (isPie && logSwitch) {
             logSwitch.parentElement.parentElement.style.display = 'none';
         }
 
         if (logSwitch && !isPie) {
-            logSwitch.addEventListener('change', function() {
+            logSwitch.addEventListener('change', function () {
                 const isLog = this.checked;
                 const scaleType = isLog ? 'logarithmic' : 'linear';
-                
+
                 // --- Chart.js frissítése ---
                 myChart.options.scales.y.type = scaleType;
 
                 // --- Logaritmikus skálánál a 0 hibaérték miatt 0.1-re különben hibát (vagy üres grafikont) dobna ---
                 if (scaleType === 'logarithmic') {
-                    myChart.options.scales.y.min = isCost ? undefined : 0.1; 
+                    myChart.options.scales.y.min = isCost ? undefined : 0.1;
                 } else {
-                    myChart.options.scales.y.min = 0; 
+                    myChart.options.scales.y.min = 0;
                 }
 
                 // --- Grafikon újrarajzolása az új beállításokkal ---

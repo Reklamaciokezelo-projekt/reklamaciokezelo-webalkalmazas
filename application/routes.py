@@ -2,9 +2,10 @@ from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User, Reklamacio, Department, Customer, Product, DefectType, Status, Role, Position
-from application.forms import NewUserForm, LoginForm, UpdateUserForm, DeleteAccountForm, ChangePasswordForm, NewReklamacioForm, UpdateReklamacioForm, DeleteReklamation, ReportFilterForm
+from application.forms import NewUserForm, LoginForm, UpdateUserForm, DeleteAccountForm, ChangePasswordForm, NewReklamacioForm, UpdateReklamacioForm, DeleteReklamation, ReportFilterForm, ForgotPasswordForm, ResetPasswordForm, SendReportEmailForm
 from application.utils.auth_role import roles_required
 from application.utils.helpers import get_or_create_dynamic, get_dashboard_stats, HONAPOK_TELJES
+from application.utils.email_service import send_password_reset_email, verify_reset_token, send_report_email, send_reklamacio_notification_email
 from sqlalchemy import func
 from datetime import date, timedelta, datetime
 from flask import send_file
@@ -448,6 +449,10 @@ def uj_reklamacio():
             # --- Tranzakció lezárása ---
             db.session.add(uj_reklamacio)
             db.session.commit()
+            
+            # --- E-mail értesítés ---
+            send_reklamacio_notification_email("Új", uj_reklamacio)
+            
             flash(f"A {uj_reklamacio.complaint_number} számú reklamáció sikeresen rögzítve!", "success")
             return redirect(url_for('reklamaciok'))
 
@@ -524,6 +529,9 @@ def modosit_reklamacio(reklamacio_id):
         final_defect     = get_or_create_dynamic(DefectType, request.form.get('defect_type'))
         final_status     = get_or_create_dynamic(Status, request.form.get('status'))
 
+        # --- Állapotváltozás ellenőrzése ---
+        status_changed = (reklamacio.status_id != final_status.id) if final_status else False
+
         # --- Adatok frissítése az objektumban (UPDATE) ---
         reklamacio.complaint_date = form.complaint_date.data
         reklamacio.complaint_number = form.complaint_number.data
@@ -544,6 +552,11 @@ def modosit_reklamacio(reklamacio_id):
         # --- Tranzakció lezárása ---
         try:
             db.session.commit()
+            
+            # --- E-mail értesítés csak státuszváltozás esetén ---
+            if status_changed:
+                send_reklamacio_notification_email("Módosított státuszú", reklamacio)
+                
             flash(f"A {reklamacio.complaint_number} számú reklamáció sikeresen frissítve!", "success")
             return redirect(url_for('reklamaciok'))
         except Exception as e:
@@ -600,6 +613,9 @@ def torol_reklamacio(reklamacio_id):
 
     # --- Törlési szándék megerősítése (POST) ---
     if form.validate_on_submit():
+
+        # --- E-mail értesítés elküldése még a törlés/tranzakció előtt ---
+        send_reklamacio_notification_email("Törölt", reklamacio)
 
         # --- Rekord eltávolítása és véglegesítés ---
         db.session.delete(reklamacio)
@@ -850,3 +866,168 @@ def download_report_pdf():
         download_name=f"riport_{group_criterion}_{date.today()}.pdf",
         mimetype='application/pdf'
     )
+
+
+# ----------------------------------------------------------------------
+# ELFELEJTETT JELSZÓ
+# – e-mail bevitel, token generálás és küldés
+# ----------------------------------------------------------------------
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+
+    # --- Hitelesített felhasználó átirányítása ---
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = ForgotPasswordForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        # --- E-mail küldés csak ha létezik a felhasználó ---
+        # --- (De mindig ugyanaz az üzenet → e-mail enumeration védelme) ---
+        if user:
+            success = send_password_reset_email(user)
+            if not success:
+                app.logger.warning(f"Jelszó-visszaállítási e-mail küldése sikertelen (user: {user.email})")
+
+        flash("Ha ez az e-mail cím regisztrált, hamarosan megérkezik a visszaállítási link.", "info")
+        return redirect(url_for('login'))
+
+    return render_template('forgot_password.html', title='Elfelejtett jelszó', form=form)
+
+
+# ----------------------------------------------------------------------
+# JELSZÓ VISSZAÁLLÍTÁSA (token alapján)
+# – token érvényesítés, új jelszó beállítás
+# ----------------------------------------------------------------------
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+
+    # --- Hitelesített felhasználó átirányítása ---
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    # --- Token ellenőrzése ---
+    email = verify_reset_token(token)
+    if email is None:
+        flash("A visszaállítási link érvénytelen vagy lejárt. Kérjük, igényeljen egy újat.", "danger")
+        return redirect(url_for('forgot_password'))
+
+    # --- Felhasználó lekérése e-mail alapján ---
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash("Felhasználó nem található.", "danger")
+        return redirect(url_for('forgot_password'))
+
+    form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+        hashed_pw = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+        user.password = hashed_pw
+
+        try:
+            db.session.commit()
+            flash("A jelszó sikeresen megváltozott. Mostantól bejelentkezhet az új jelszavával.", "success")
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Hiba jelszó visszaállításakor (user: {user.id}): {e}")
+            flash("Hiba történt a jelszó mentése során. Kérjük, próbálja újra.", "danger")
+            return render_template('reset_password.html', form=form), 500
+
+    if request.method == 'POST':
+        return render_template('reset_password.html', form=form), 422
+
+    return render_template('reset_password.html', title='Jelszó visszaállítása', form=form)
+
+
+# ----------------------------------------------------------------------
+# RIPORT KÜLDÉSE E-MAILBEN (PDF melléklettel)
+# – csak super_user
+# ----------------------------------------------------------------------
+@app.route('/reports/send_email', methods=['POST'])
+@login_required
+@roles_required('super_user')
+def send_report_email_route():
+    form = SendReportEmailForm()
+
+    if not form.validate_on_submit():
+        flash("Érvénytelen adatok. Kérjük, ellenőrizze az e-mail címet.", "danger")
+        return redirect(url_for('reports'))
+
+    recipient = form.recipient_email.data
+    start_str = form.start_date.data
+    end_str = form.end_date.data
+    group_criterion = form.group_by.data
+    chart_type = form.chart_type.data
+
+    # --- Dátumok visszaalakítása ---
+    try:
+        start = datetime.strptime(start_str, '%Y-%m-%d').date()
+        end = datetime.strptime(end_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        flash("Érvénytelen dátumformátum.", "danger")
+        return redirect(url_for('reports'))
+
+    # --- Lekérdezés összeállítása (azonos logika mint download_report_pdf-nél) ---
+    query = None
+    title_suffix = ""
+
+    if group_criterion == 'defect_type':
+        query = db.session.query(DefectType.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.defect_type).group_by(DefectType.display_name)
+        title_suffix = "Hiba típusok szerint"
+    elif group_criterion == 'customer':
+        query = db.session.query(Customer.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.customer).group_by(Customer.display_name)
+        title_suffix = "Vevők szerint"
+    elif group_criterion == 'product':
+        query = db.session.query(Product.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.product).group_by(Product.display_name)
+        title_suffix = "Termékek szerint"
+    elif group_criterion == 'status':
+        query = db.session.query(Status.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.status).group_by(Status.display_name)
+        title_suffix = "Státusz szerint"
+    elif group_criterion == 'department':
+        query = db.session.query(Department.display_name, func.count(Reklamacio.id))\
+            .join(Reklamacio.department).group_by(Department.display_name)
+        title_suffix = "Üzemegységek szerint"
+    elif group_criterion == 'monthly_cost':
+        month_format = func.to_char(Reklamacio.complaint_date, 'YYYY-MM')
+        query = db.session.query(month_format, func.sum(Reklamacio.total_cost))\
+            .group_by(month_format).order_by(month_format)
+        title_suffix = "Havi költségbontás"
+    elif group_criterion == 'monthly_count':
+        month_format = func.to_char(Reklamacio.complaint_date, 'YYYY-MM')
+        query = db.session.query(month_format, func.count(Reklamacio.id))\
+            .group_by(month_format).order_by(month_format)
+        title_suffix = "Havi hibaszám alakulása"
+
+    if not query:
+        flash("Ismeretlen csoportosítási szempont.", "danger")
+        return redirect(url_for('reports'))
+
+    results = query.filter(Reklamacio.complaint_date.between(start, end)).all()
+    labels = [str(row[0]) if row[0] else "Nincs adat" for row in results]
+    values = [float(row[1]) if row[1] is not None else 0.0 for row in results]
+
+    if not labels:
+        flash("Nincs adat a megadott időszakban, a riport nem kerül elküldésre.", "warning")
+        return redirect(url_for('reports'))
+
+    # --- PDF generálása ---
+    pdf_buffer = generate_report_pdf(labels, values, title_suffix, chart_type, False)
+
+    # --- Küldés e-mailben ---
+    date_range = f"{start.strftime('%Y.%m.%d')} – {end.strftime('%Y.%m.%d')}"
+    filename = f"riport_{group_criterion}_{date.today()}.pdf"
+    success = send_report_email(recipient, pdf_buffer, filename, title_suffix, date_range)
+
+    if success:
+        flash(f"A riport sikeresen elküldve: {recipient}", "success")
+    else:
+        flash("A riport generálva, de az e-mail küldése sikertelen. Ellenőrizze a szerver naplót.", "danger")
+
+    return redirect(url_for('reports'))
