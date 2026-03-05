@@ -209,4 +209,45 @@ class ReportFilterForm(FlaskForm):
     ], validators=[DataRequired()])
 
     submit = SubmitField('Riport generálása')
-        
+
+
+# ----------------------------------------------------------------------
+# ELFELEJTETT JELSZÓ
+# ----------------------------------------------------------------------
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('E-mail cím', validators=[
+        DataRequired(message="Az e-mail cím megadása kötelező."),
+        Email(message="A megadott e-mail cím formailag nem megfelelő.")
+    ])
+    submit = SubmitField('Visszaállítási link küldése')
+
+
+# ----------------------------------------------------------------------
+# ÚJ JELSZÓ BEÁLLÍTÁSA (token alapján)
+# ----------------------------------------------------------------------
+class ResetPasswordForm(FlaskForm):
+    new_password = PasswordField('Új jelszó', validators=[
+        DataRequired(message="Az új jelszó megadása kötelező."),
+        Length(min=6, message="A jelszónak legalább 6 karakter hosszúnak kell lennie.")
+    ])
+    confirm_password = PasswordField('Új jelszó megerősítése', validators=[
+        DataRequired(message="A jelszó megerősítése kötelező."),
+        EqualTo('new_password', message="A két jelszó nem egyezik meg.")
+    ])
+    submit = SubmitField('Jelszó módosítása')
+
+
+# ----------------------------------------------------------------------
+# RIPORT KÜLDÉSE E-MAILBEN
+# ----------------------------------------------------------------------
+class SendReportEmailForm(FlaskForm):
+    recipient_email = StringField('Címzett e-mail címe', validators=[
+        DataRequired(message="A címzett e-mail cím megadása kötelező."),
+        Email(message="A megadott e-mail cím formailag nem megfelelő.")
+    ])
+    # --- Rejtett mezők a riport paramétereihez ---
+    start_date = StringField()
+    end_date = StringField()
+    group_by = StringField()
+    chart_type = StringField()
+    submit = SubmitField('Küldés')

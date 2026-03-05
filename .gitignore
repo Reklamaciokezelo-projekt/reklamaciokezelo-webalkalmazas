@@ -54,3 +54,6 @@ Thumbs.db
 *.swp
 *~
 
+# App secrets / config
+config.py
+
