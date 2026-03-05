@@ -55,5 +55,4 @@ Thumbs.db
 *~
 
 # App secrets / config
-config.py
-
+.env
