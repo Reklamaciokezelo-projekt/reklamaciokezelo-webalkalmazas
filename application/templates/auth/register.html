@@ -15,7 +15,8 @@
 
                 <!-- Kártya fejléc -->
                 <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
-                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 50px; height: 50px;">
+                    <div
+                        class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center me-3 icon-box-large">
                         <i class="bi bi-person-plus-fill fs-3"></i>
                     </div>
                     <h3 class="mb-0 fw-bold text-gray-800">Felhasználói fiók létrehozása</h3>
@@ -27,7 +28,7 @@
 
                     <!-- 1. Szekció: Személyes adatok -->
                     <h5 class="text-secondary mb-3">Személyes adatok</h5>
-                    
+
                     <div class="row">
 
                         <!-- Vezetéknév -->
@@ -35,9 +36,9 @@
                             {{ form.surname.label(class="form-label fw-medium") }}
                             {{ form.surname(class="form-control" + (" is-invalid" if form.surname.errors else "")) }}
                             {% if form.surname.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.surname.errors %}{{ error }}{% endfor %}
-                                </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.surname.errors %}{{ error }}{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
@@ -46,9 +47,9 @@
                             {{ form.forename.label(class="form-label fw-medium") }}
                             {{ form.forename(class="form-control" + (" is-invalid" if form.forename.errors else "")) }}
                             {% if form.forename.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.forename.errors %}{{ error }}{% endfor %}
-                                </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.forename.errors %}{{ error }}{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
@@ -59,9 +60,9 @@
                         {{ form.position.label(class="form-label fw-medium") }}
                         {{ form.position(class="form-select", id="position-tags") }}
                         {% if form.position.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in form.position.errors %}{{ error }}{% endfor %}
-                            </div>
+                        <div class="text-danger small mt-1">
+                            {% for error in form.position.errors %}{{ error }}{% endfor %}
+                        </div>
                         {% endif %}
                     </div>
 
@@ -75,9 +76,9 @@
                             {{ form.username.label(class="form-label fw-medium") }}
                             {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
                             {% if form.username.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.username.errors %}{{ error }}{% endfor %}
-                                </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}{{ error }}{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
@@ -86,9 +87,9 @@
                             {{ form.email.label(class="form-label fw-medium") }}
                             {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
                             {% if form.email.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.email.errors %}{{ error }}{% endfor %}
-                                </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}{{ error }}{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
@@ -99,9 +100,9 @@
                         {{ form.role.label(class="form-label fw-medium") }}
                         {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
                         {% if form.role.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.role.errors %}{{ error }}{% endfor %}
-                            </div>
+                        <div class="invalid-feedback">
+                            {% for error in form.role.errors %}{{ error }}{% endfor %}
+                        </div>
                         {% endif %}
                     </div>
 
@@ -115,20 +116,23 @@
                             {{ form.password.label(class="form-label fw-medium") }}
                             {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
                             {% if form.password.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.password.errors %}{{ error }}{% endfor %}
-                                </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}{{ error }}{% endfor %}
+                            </div>
                             {% endif %}
+                            <small class="form-text text-muted mt-1 d-block">A jelszónak legalább 6 karakter hosszúnak
+                                kell lennie, és tartalmaznia kell kisbetűt, nagybetűt, valamint számot.</small>
                         </div>
 
                         <!-- Jelszó megadása (confirm) -->
                         <div class="col-md-6 mb-4">
                             {{ form.confirm_password.label(class="form-label fw-medium") }}
-                            {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
+                            {{ form.confirm_password(class="form-control" + (" is-invalid" if
+                            form.confirm_password.errors else "")) }}
                             {% if form.confirm_password.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
-                                </div>
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -148,7 +152,7 @@
         </div>
 
         <!-- Toast üzenet konténer -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        <div class="toast-container position-fixed bottom-0 end-0 p-3 toast-container-custom">
             <div id="localSuccessToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header bg-success text-white">
                     <strong class="me-auto">Rendszerüzenet</strong>
@@ -175,7 +179,7 @@
 <script src="{{ url_for('static', filename='js/dynamic_select.js') }}"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
         // --- A pozíció mező felokosítása: kereshető és új érték is beírható ---
         initDynamicSelect('position-tags', 'Válassz vagy gépelj be újat...', true);

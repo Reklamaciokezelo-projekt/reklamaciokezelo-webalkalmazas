@@ -36,11 +36,11 @@
 
     <!-- Flask változók átadása a JavaScriptnek (bridge) -->
     <div id="chart-data-bridge" data-labels='{{ labels | tojson }}' data-values='{{ values | tojson }}'
-        data-type='{{ chart_type }}' data-criterion='{{ form.group_by.data }}' style="display: none;">
+        data-type='{{ chart_type }}' data-criterion='{{ form.group_by.data }}' class="d-none">
     </div>
 
     <!-- PDF export form -->
-    <form action="{{ url_for('download_report_pdf') }}" method="POST" style="display: inline;" id="pdfDownloadForm">
+    <form action="{{ url_for('download_report_pdf') }}" method="POST" class="d-inline" id="pdfDownloadForm">
         {{ form.hidden_tag() }}
         <input type="hidden" name="start_date" value="{{ form.start_date.data }}">
         <input type="hidden" name="end_date" value="{{ form.end_date.data }}">
@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <div class="chart-container" style="position: relative; height: 50vh; max-height: 450px; width: 100%;">
+            <div class="chart-container chart-container-custom">
                 <canvas id="myChart"></canvas>
             </div>
 

@@ -9,38 +9,18 @@ body {
 }
 
 .d-flex button {
-    color:#f0f0f5;;
-    border-color: #f0f0f5;;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.account-card {
-    max-width: 600px;
-    margin: 0 auto;
-    border-radius: 10px;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.account-text {
-    font-size: 1.1rem;
-}
-
-.account-button-wrapper {
-    max-width: 600px;
-    margin: 30px auto 0 auto;
-    text-align: center;
+    color: #f0f0f5;
+    ;
+    border-color: #f0f0f5;
+    ;
 }
 
 #usersTable {
     border: 1px solid #ccc;
 }
 
-#usersTable th, #usersTable td {
+#usersTable th,
+#usersTable td {
     border: 1px solid #ddd;
 }
 
@@ -48,41 +28,7 @@ div.dataTables_filter {
     margin-bottom: 15px;
 }
 
-.add-user-btn {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    padding: 10px 20px;
-    font-size: 1.1rem;
-}
-
-.dataTables_wrapper .dataTables_info {
-    margin-top: 20px;
-}
-
-.dataTables_wrapper .dataTables_paginate {
-    margin-top: 20px;
-}
-
-.dataTables_wrapper {
-    margin-bottom: 20px;
-}
-
-.date-badge {
-    display: flex;
-    gap: 8px;
-    padding: 6px 12px;
-    background-color: #343a40;
-    border: 1px solid #6c757d;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    font-size: 0.9rem;
-    color: #f8f9fa;
-}
-
-.date-badge span {
-    font-weight: 500;
-}
-
-#navbarSupportedContent > .d-flex {
+#navbarSupportedContent>.d-flex {
     margin-left: auto;
     align-items: stretch;
 }
@@ -93,7 +39,7 @@ div.dataTables_filter {
 }
 
 @media (min-width: 992px) {
-    #navbarSupportedContent > .d-flex {
+    #navbarSupportedContent>.d-flex {
         align-items: center;
     }
 
@@ -116,7 +62,8 @@ div.dataTables_filter {
     border: 1px solid #ccc;
 }
 
-#reklamaciokTable th, #usersTable td {
+#reklamaciokTable th,
+#reklamaciokTable td {
     border: 1px solid #ddd;
 }
 
@@ -126,132 +73,165 @@ div.dataTables_filter {
 /* --- Base html Stílusok --- */
 
 :root {
-            /* Elegáns sötétkék árnyalat a felső sávnak */
-            --header-bg: #1e293b; 
-            /* Kiemelő szín (Bootstrap primary kicsit sötétítve) */
-            --primary-color: #0d6efd;
-            --body-bg: #f1f5f9;
-        }
+    /* sötétkék árnyalat a felső sávnak */
+    --header-bg: #1e293b;
+    /* Kiemelő szín (Bootstrap primary kicsit sötétítve) */
+    --primary-color: #0d6efd;
+    --body-bg: #f1f5f9;
+}
 
-        body { 
-            background-color: var(--body-bg); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
-            color: #334155;
-        }
-        
-        /* --- FELSŐ SÁV (Sötét háttér) --- */
-        .header-top { 
-            background-color: var(--header-bg); 
-            color: #ffffff;
-            padding: 0.6rem 0; 
-            position: relative;
-            z-index: 1030; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Logó stílusa sötét háttéren */
-        .navbar-brand { 
-            font-weight: 700; 
-            color: #ffffff !important; 
-            letter-spacing: 0.5px; 
-            font-size: 1.25rem;
-            white-space: nowrap; 
-            text-transform: uppercase;
-        }
+body {
+    background-color: var(--body-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #334155;
+}
 
-        .brand-icon-box {
-            background-color: rgba(255, 255, 255, 0.1); /* Átlátszó fehér háttér */
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-        
-        /* --- ALSÓ MENÜSÁV (Világos, de nem hófehér) --- */
-        .header-nav { 
-            background: #ffffff; 
-            border-bottom: 1px solid #e2e8f0; 
-            padding: 0.5rem 0; 
-            /* Finom árnyék, hogy elváljon a tartalomtól */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Menü gombok stílusa */
-        .nav-pills .nav-link { 
-            color: #64748b; /* Szürkéskék szöveg */
-            font-weight: 600; 
-            padding: 0.6rem 1.2rem; 
-            border-radius: 6px; 
-            transition: all 0.2s ease-in-out;
-            margin-right: 5px;
-            font-size: 0.95rem;
-        }
-        
-        /* Hover: Halvány kék háttér */
-        .nav-pills .nav-link:hover { 
-            color: var(--primary-color) !important; 
-            background-color: #eff6ff; 
-        }
-        
-        /* Aktív: Teli kék */
-        .nav-pills .nav-link.active { 
-            background-color: var(--primary-color) !important; 
-            color: #fff !important; 
-            box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.4);
-        }
-        
-        .nav-link i { margin-right: 8px; }
+/* --- FELSŐ SÁV (Sötét háttér) --- */
+.header-top {
+    background-color: var(--header-bg);
+    color: #ffffff;
+    padding: 0.6rem 0;
+    position: relative;
+    z-index: 1030;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
 
-        /* --- TARTALOM --- */
-        .page-wrapper { padding-top: 2rem; padding-bottom: 3rem; }
-        
-        /* Kártyák finomítása */
-        .card { 
-            border: none; 
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); 
-            border-radius: 8px; 
-            background-color: #fff;
-        }
-        .card-header {
-            background-color: #fff;
-            border-bottom: 1px solid #f1f5f9;
-            font-weight: 600;
-            padding: 1rem 1.25rem;
-        }
+/* Logó stílusa sötét háttéren */
+.navbar-brand {
+    font-weight: 700;
+    color: #ffffff !important;
+    letter-spacing: 0.5px;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
 
-        /* Dropdown javítás */
-        .dropdown-menu {
-            margin-top: 8px !important;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .dropdown-item { padding: 10px 20px; color: #475569; }
-        .dropdown-item:hover { background-color: #f8fafc; color: #0f172a; }
-        .dropdown-item:active { background-color: var(--primary-color); color: #fff; }
+.brand-icon-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Átlátszó fehér háttér */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
 
-        /* Mobil menü gomb stílusa */
-        .mobile-menu-btn {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #475569;
-            background-color: #f8fafc;
-            border-color: #e2e8f0 !important;
-        }
-        .mobile-menu-btn:hover {
-            background-color: #e2e8f0;
-            color: #1e293b;
-        }
-        
-        /* User info a sötét sávban */
-        .user-text-main { color: #fff; font-weight: 600; font-size: 0.9rem; }
-        .user-text-sub { color: rgba(255,255,255,0.7); font-size: 0.75rem; }
-        .user-avatar-box {
-            background-color: #fff;
-            color: var(--header-bg);
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        
-        /* Dátum szöveg színe a sötét sávban */
-        .header-date { color: rgba(255,255,255,0.8); border-right: 1px solid rgba(255,255,255,0.2) !important; }
+/* --- ALSÓ MENÜSÁV (Világos, de nem hófehér) --- */
+.header-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.5rem 0;
+    /* Finom árnyék, hogy elváljon a tartalomtól */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Menü gombok stílusa */
+.nav-pills .nav-link {
+    color: #64748b;
+    /* Szürkéskék szöveg */
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    margin-right: 5px;
+    font-size: 0.95rem;
+}
+
+/* Hover: Halvány kék háttér */
+.nav-pills .nav-link:hover {
+    color: var(--primary-color) !important;
+    background-color: #eff6ff;
+}
+
+/* Aktív: Teli kék */
+.nav-pills .nav-link.active {
+    background-color: var(--primary-color) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.4);
+}
+
+.nav-link i {
+    margin-right: 8px;
+}
+
+/* --- TARTALOM --- */
+.page-wrapper {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* Kártyák finomítása */
+.card {
+    border: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f1f5f9;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+/* Dropdown javítás */
+.dropdown-menu {
+    margin-top: 8px !important;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    color: #475569;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.dropdown-item:active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* Mobil menü gomb stílusa */
+.mobile-menu-btn {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f8fafc;
+    border-color: #e2e8f0 !important;
+}
+
+.mobile-menu-btn:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+/* User info a sötét sávban */
+.user-text-main {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-text-sub {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+}
+
+.user-avatar-box {
+    background-color: #fff;
+    color: var(--header-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Dátum szöveg színe a sötét sávban */
+.header-date {
+    color: rgba(255, 255, 255, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
 
 
 /* --- Dashboard Kártya Stílusok --- */
@@ -266,19 +246,21 @@ div.dataTables_filter {
 /* 2. Figyelmeztető állapot (Elegáns Mélyvörös) */
 /* Nincs animáció, csak egy komolyabb színátmenet */
 .card-status-danger {
-    background: linear-gradient(135deg, #e55353 0%, #902e2e 100%); 
+    background: linear-gradient(135deg, #e55353 0%, #902e2e 100%);
     color: white !important;
     border: none;
 }
 
 /* 3. Költség kártya - Normál (Zöld csík) */
 .card-border-ok {
-    border-left: 5px solid #1cc88a !important; /* Bootstrap success zöld */
+    border-left: 5px solid #1cc88a !important;
+    /* Bootstrap success zöld */
 }
 
 /* 4. Költség kártya - Figyelmeztetés (Vörös csík) */
 .card-border-danger {
-    border-left: 5px solid #c0392b !important; /* Sötétbordó szegély */
+    border-left: 5px solid #c0392b !important;
+    /* Sötétbordó szegély */
 }
 
 /* Szövegszín a fehér kártyán hiba esetén */
@@ -289,7 +271,7 @@ div.dataTables_filter {
 /* 3. Kártya - Éves költség (Elegáns Mélylila) */
 .card-border-ytd {
     /* Egy szép, telt Bootstrap indigo szín */
-    border-left: 5px solid #6f42c1 !important; 
+    border-left: 5px solid #6f42c1 !important;
 }
 
 .text-ytd {
@@ -298,7 +280,8 @@ div.dataTables_filter {
 
 /* 4. Kártya - Visszaszállítás (Elegáns Narancs) */
 .card-border-return {
-    border-left: 5px solid #e67e22 !important; /* Kellemes, sötétebb narancssárga */
+    border-left: 5px solid #e67e22 !important;
+    /* Kellemes, sötétebb narancssárga */
 }
 
 .text-return {
@@ -307,7 +290,8 @@ div.dataTables_filter {
 
 /* --- Üzemegység lista görgetősávja --- */
 .scrollable-list {
-    max-height: 320px; /* Megegyezik a grafikon fix magasságával */
+    max-height: 320px;
+    /* Megegyezik a grafikon fix magasságával */
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -316,13 +300,81 @@ div.dataTables_filter {
 .scrollable-list::-webkit-scrollbar {
     width: 6px;
 }
+
 .scrollable-list::-webkit-scrollbar-track {
-    background: #f8f9fa; /* Nagyon halvány szürke háttér */
+    background: #f8f9fa;
+    /* Nagyon halvány szürke háttér */
 }
+
 .scrollable-list::-webkit-scrollbar-thumb {
-    background: #cbd5e1; /* Finom szürkéskék csúszka */
+    background: #cbd5e1;
+    /* Finom szürkéskék csúszka */
     border-radius: 4px;
 }
+
 .scrollable-list::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8; /* Sötétebb, ha ráviszi az egeret */
+    background: #94a3b8;
+    /* Sötétebb, ha ráviszi az egeret */
+}
+
+/* --- Extracted Inline Styles --- */
+
+/* Appended Classes */
+.brand-icon-small {
+    width: 32px;
+    height: 32px;
+}
+
+.header-brand-icon {
+    font-size: 18px;
+}
+
+.header-user-text-wrapper {
+    line-height: 1.2;
+}
+
+.avatar-box-small {
+    width: 38px;
+    height: 38px;
+}
+
+.toast-container-custom {
+    z-index: 1100;
+}
+
+.icon-box-large {
+    width: 50px;
+    height: 50px;
+}
+
+.icon-box-xlarge {
+    width: 80px;
+    height: 80px;
+}
+
+.badge-custom-font {
+    font-size: 0.85rem;
+}
+
+.delete-info-box-small {
+    max-width: 300px;
+}
+
+.delete-info-box-medium {
+    max-width: 350px;
+}
+
+.forgot-password-icon {
+    font-size: 2.5rem;
+}
+
+.login-form-wrapper {
+    max-width: 420px;
+}
+
+.chart-container-custom {
+    position: relative;
+    height: 50vh;
+    max-height: 450px;
+    width: 100%;
 }
