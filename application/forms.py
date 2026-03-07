@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField, DateField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange, Regexp
 from application.models import User, Reklamacio, Role, Position
 from wtforms_sqlalchemy.fields import QuerySelectField
 
@@ -15,8 +15,12 @@ class NewUserForm(FlaskForm):
     position = SelectField('Beosztás', validators=[DataRequired()], validate_choice=False)
     username = StringField('Felhasználónév', validators=[DataRequired(), Length(min=2,max=20)])
     email = StringField('E-mail cím', validators=[DataRequired(), Email(message="A megadott email cím formailag nem megfelelő")])
-    password = PasswordField('Jelszó', validators=[DataRequired()])
-    confirm_password = PasswordField('Jelszó még egyszer', validators=[DataRequired(), EqualTo('password', message="Nem egyezik a fent megadott jelszóval")])
+    password = PasswordField('Jelszó', validators=[
+        DataRequired(),
+        Length(min=6, message="A jelszónak legalább 6 karakter hosszúnak kell lennie."),
+        Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$', message="A jelszónak tartalmaznia kell kisbetűt, nagybetűt és számot.")
+    ])
+    confirm_password = PasswordField('Jelszó még egyszer', validators=[DataRequired(), EqualTo('password', message="Nem egyezik a két megadott jelszó")])
     
     role = QuerySelectField('Felhasználói szint', 
                             query_factory=lambda: Role.query.all(),
@@ -93,7 +97,11 @@ class UpdateUserForm(FlaskForm):
 # ----------------------------------------------------------------------
 class ChangePasswordForm(FlaskForm):
     current_password = PasswordField('Jelenlegi jelszó', validators=[DataRequired()])
-    new_password = PasswordField('Új jelszó', validators=[DataRequired()])
+    new_password = PasswordField('Új jelszó', validators=[
+        DataRequired(),
+        Length(min=6, message="A jelszónak legalább 6 karakter hosszúnak kell lennie."),
+        Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$', message="A jelszónak tartalmaznia kell kisbetűt, nagybetűt és számot.")
+    ])
     confirm_password = PasswordField('Új jelszó megerősítése', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Mentés')
 
@@ -228,7 +236,8 @@ class ForgotPasswordForm(FlaskForm):
 class ResetPasswordForm(FlaskForm):
     new_password = PasswordField('Új jelszó', validators=[
         DataRequired(message="Az új jelszó megadása kötelező."),
-        Length(min=6, message="A jelszónak legalább 6 karakter hosszúnak kell lennie.")
+        Length(min=6, message="A jelszónak legalább 6 karakter hosszúnak kell lennie."),
+        Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$', message="A jelszónak tartalmaznia kell kisbetűt, nagybetűt és számot.")
     ])
     confirm_password = PasswordField('Új jelszó megerősítése', validators=[
         DataRequired(message="A jelszó megerősítése kötelező."),
