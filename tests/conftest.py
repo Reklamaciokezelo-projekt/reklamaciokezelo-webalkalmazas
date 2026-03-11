@@ -14,7 +14,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from application import app as flask_app, db as _db, bcrypt
-from application.models import User, Role, Position
+from application.models import User, Role, Position, Customer, Product, DefectType, Department, Status
 
 
 @pytest.fixture(scope='session')
@@ -69,13 +69,15 @@ def app():
 
 
 def _seed_test_data():
-    """Minimális tesztadatok feltöltése (szerepkör, pozíció, felhasználó)."""
+    """Minimális tesztadatok feltöltése (szerepkör, pozíció, felhasználó és alapvető entitások)."""
+    # Szerepkörök és Pozíciók
     role = Role(name='user', display_name='Felhasználó')
+    admin_role = Role(name='super_user', display_name='Szuperfelhasználó')
     position = Position(name='test', display_name='Teszt')
-    _db.session.add(role)
-    _db.session.add(position)
+    _db.session.add_all([role, admin_role, position])
     _db.session.commit()
 
+    # Hitelesítési Teszt Felhasználó
     hashed = bcrypt.generate_password_hash('OldPassword1!').decode('utf-8')
     user = User(
         surname='Teszt',
@@ -88,6 +90,18 @@ def _seed_test_data():
     )
     _db.session.add(user)
     _db.session.commit()
+
+    # Reklamáció Referencia Adatok (Teszteléshez)
+    customer = Customer(name='teszt_vevo', display_name='Teszt Vevő Kft.')
+    product = Product(name='teszt_termek', display_name='Teszt Termék')
+    defect = DefectType(name='teszt_hiba', display_name='Teszt Hiba')
+    dept = Department(name='teszt_uzem', display_name='Teszt Üzemegység')
+    status_foly = Status(name='folyamatban', display_name='Folyamatban')
+    status_elf = Status(name='elfogadva', display_name='Elfogadva')
+    
+    _db.session.add_all([customer, product, defect, dept, status_foly, status_elf])
+    _db.session.commit()
+
 
 
 @pytest.fixture

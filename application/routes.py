@@ -529,8 +529,13 @@ def modosit_reklamacio(reklamacio_id):
         final_defect     = get_or_create_dynamic(DefectType, request.form.get('defect_type'))
         final_status     = get_or_create_dynamic(Status, request.form.get('status'))
 
-        # --- Állapotváltozás ellenőrzése ---
+        # --- Adatváltozások ellenőrzése ---
         status_changed = (reklamacio.status_id != final_status.id) if final_status else False
+        quantity_changed = (reklamacio.quantity != form.quantity.data)
+        requires_return_changed = (reklamacio.requires_return != form.requires_return.data)
+        cost_changed = (reklamacio.total_cost != form.total_cost.data)
+
+        any_important_change = status_changed or quantity_changed or requires_return_changed or cost_changed
 
         # --- Adatok frissítése az objektumban (UPDATE) ---
         reklamacio.complaint_date = form.complaint_date.data
@@ -553,9 +558,9 @@ def modosit_reklamacio(reklamacio_id):
         try:
             db.session.commit()
             
-            # --- E-mail értesítés csak státuszváltozás esetén ---
-            if status_changed:
-                send_reklamacio_notification_email("Módosított státuszú", reklamacio)
+            # --- E-mail értesítés ha fontos adat változott ---
+            if any_important_change:
+                send_reklamacio_notification_email("Módosított", reklamacio)
                 
             flash(f"A {reklamacio.complaint_number} számú reklamáció sikeresen frissítve!", "success")
             return redirect(url_for('reklamaciok'))
@@ -885,7 +890,6 @@ def forgot_password():
         user = User.query.filter_by(email=form.email.data).first()
 
         # --- E-mail küldés csak ha létezik a felhasználó ---
-        # --- (De mindig ugyanaz az üzenet → e-mail enumeration védelme) ---
         if user:
             success = send_password_reset_email(user)
             if not success:

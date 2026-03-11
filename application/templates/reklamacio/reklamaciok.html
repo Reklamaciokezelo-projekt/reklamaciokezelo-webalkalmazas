@@ -22,7 +22,7 @@
 
                 <!-- Reklamációk táblázata -->
                 <div class="table-responsive" style="overflow-x: hidden;">
-                    <table id="reklamaciokTable" class="table table-hover align-middle w-100" style="width:100%">
+                    <table id="reklamaciokTable" class="table table-hover align-middle w-100 table-loading" style="width:100%">
                         <thead class="table-light">
                             <tr>
 
@@ -157,7 +157,10 @@
                 url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/hu.json"
             },
             order: [[1, "desc"]],
-            columnDefs: dtColumnDefs
+            columnDefs: dtColumnDefs,
+            initComplete: function(settings, json) {
+                $('#reklamaciokTable').removeClass('table-loading').addClass('table-ready');
+            }
         });
 
         // --- Reszponzív újraszámolás ablak átméretezéskor ---
