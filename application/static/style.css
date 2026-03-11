@@ -1,82 +1,13 @@
-body {
-    background-color: #f0f0f5;
-}
-
-.navbar-brand {
-    color: #cce0ff;
-    font-size: 1.6rem;
-    margin-left: 10px;
-}
-
-.d-flex button {
-    color: #f0f0f5;
-    ;
-    border-color: #f0f0f5;
-    ;
-}
-
-#usersTable {
-    border: 1px solid #ccc;
-}
-
-#usersTable th,
-#usersTable td {
-    border: 1px solid #ddd;
-}
-
-div.dataTables_filter {
-    margin-bottom: 15px;
-}
-
-#navbarSupportedContent>.d-flex {
-    margin-left: auto;
-    align-items: stretch;
-}
-
-#navbarSupportedContent .btn {
-    min-width: 180px;
-    text-align: center;
-}
-
-@media (min-width: 992px) {
-    #navbarSupportedContent>.d-flex {
-        align-items: center;
-    }
-
-    #navbarSupportedContent .btn {
-        min-width: 180px;
-    }
-}
-
-@media (max-width: 991.98px) {
-    #navbarSupportedContent .d-flex {
-        margin-top: 12px;
-    }
-}
-
-.form-control {
-    width: 100%;
-}
-
-#reklamaciokTable {
-    border: 1px solid #ccc;
-}
-
-#reklamaciokTable th,
-#reklamaciokTable td {
-    border: 1px solid #ddd;
-}
-
-
-/* Dashboard */
-
-/* --- Base html Stílusok --- */
+/* ===============================================*/
+/* --- ALAPVETŐ OLDALBEÁLLÍTÁSOK ÉS VÁLTOZÓK --- */
+/* ===============================================*/
 
 :root {
-    /* sötétkék árnyalat a felső sávnak */
+    /* Sötétkék árnyalat a felső sávnak */
     --header-bg: #1e293b;
-    /* Kiemelő szín (Bootstrap primary kicsit sötétítve) */
+    /* Kiemelő szín (Bootstrap primary sötétítve) */
     --primary-color: #0d6efd;
+    /* Oldal általános háttérszíne */
     --body-bg: #f1f5f9;
 }
 
@@ -86,7 +17,11 @@ body {
     color: #334155;
 }
 
-/* --- FELSŐ SÁV (Sötét háttér) --- */
+/* ==========================================*/
+/* --- NAVIGÁCIÓS SÁV (HEADER) ÉS LOGÓ --- */
+/* ==========================================*/
+
+/* Felső sáv (Sötét háttér) */
 .header-top {
     background-color: var(--header-bg);
     color: #ffffff;
@@ -96,7 +31,7 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Logó stílusa sötét háttéren */
+/* Logó stílusa a navigációban */
 .navbar-brand {
     font-weight: 700;
     color: #ffffff !important;
@@ -106,26 +41,40 @@ body {
     text-transform: uppercase;
 }
 
+/* Logó doboz */
 .brand-icon-box {
     background-color: rgba(255, 255, 255, 0.1);
-    /* Átlátszó fehér háttér */
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
 }
 
-/* --- ALSÓ MENÜSÁV (Világos, de nem hófehér) --- */
+/* Alsó menüsáv (világos) */
 .header-nav {
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
     padding: 0.5rem 0;
-    /* Finom árnyék, hogy elváljon a tartalomtól */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* Menü gombok stílusa */
+/* Dátum szöveg színe a sötét sávban */
+.header-date {
+    color: rgba(255, 255, 255, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* A Bootstrap menü belső elemeinek jobbra tolása és nyújtása */
+#navbarSupportedContent>.d-flex {
+    margin-left: auto;
+    align-items: stretch;
+}
+
+/* =======================*/
+/* GOMBOK ÉS MENÜPONTOK */
+/* =======================*/
+
+/* Menüpontok alapstílusa */
 .nav-pills .nav-link {
     color: #64748b;
-    /* Szürkéskék szöveg */
     font-weight: 600;
     padding: 0.6rem 1.2rem;
     border-radius: 6px;
@@ -134,13 +83,13 @@ body {
     font-size: 0.95rem;
 }
 
-/* Hover: Halvány kék háttér */
+/* Hover: Halványkék háttér */
 .nav-pills .nav-link:hover {
     color: var(--primary-color) !important;
     background-color: #eff6ff;
 }
 
-/* Aktív: Teli kék */
+/* Aktív: kék háttér fehér szöveggel */
 .nav-pills .nav-link.active {
     background-color: var(--primary-color) !important;
     color: #fff !important;
@@ -151,28 +100,41 @@ body {
     margin-right: 8px;
 }
 
-/* --- TARTALOM --- */
-.page-wrapper {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
+.d-flex button {
+    color: #f0f0f5;
+    border-color: #f0f0f5;
 }
 
-/* Kártyák finomítása */
-.card {
-    border: none;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    background-color: #fff;
+/* A navigációs sávban lévő gombok minimum szélessége */
+#navbarSupportedContent .btn {
+    min-width: 180px;
+    text-align: center;
 }
 
-.card-header {
-    background-color: #fff;
-    border-bottom: 1px solid #f1f5f9;
+/* ===============================================*/
+/* --- FELHASZNÁLÓI INFORMÁCIÓK ÉS DROPDOWN --- */
+/* ===============================================*/
+
+/* Felhasználó neve és beosztása a sötét sávban */
+.user-text-main {
+    color: #fff;
     font-weight: 600;
-    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
 }
 
-/* Dropdown javítás */
+.user-text-sub {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+}
+
+/* Felhasználói ikon keret */
+.user-avatar-box {
+    background-color: #fff;
+    color: var(--header-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Legördülő menü (Dropdown) */
 .dropdown-menu {
     margin-top: 8px !important;
     border-radius: 8px;
@@ -195,6 +157,148 @@ body {
     color: #fff;
 }
 
+/* ==============================================*/
+/* TARTALMI RÉSZEK, ŰRLAPOK ÉS KÁRTYÁK (CARDS) */
+/* ==============================================*/
+
+/* Általános űrlapmező 100%-os szélességre */
+.form-control {
+    width: 100%;
+}
+
+/* A fő tartalmi terület térközei */
+.page-wrapper {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* Kártyák finomítása */
+.card {
+    border: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+/* Kártya fejléce: fehér háttér, finom elválasztó vonal */
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f1f5f9;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+/* Belépési, jelszó visszaállító és elfelejtett jelszó kártyák méretezése és centrálása */
+.login-form-wrapper {
+    max-width: 420px;
+}
+
+.reset-card, 
+.forgot-card {
+    max-width: 460px;
+    margin: 80px auto;
+}
+
+/* =================================================*/
+/* --- TÁBLÁZATOK ÉS ADATKEZELÉS (DataTables) --- */
+/* =================================================*/
+
+/* DataTables keret */
+#usersTable, #reklamaciokTable {
+    border: 1px solid #ccc;
+}
+
+/* Cella és fejléc keretek */
+#usersTable th, #usersTable td, 
+#reklamaciokTable th, #reklamaciokTable td {
+    border: 1px solid #ddd;
+}
+
+/* DataTables keresőmező alatti távolság */
+div.dataTables_filter {
+    margin-bottom: 15px;
+}
+
+/* Táblázat villanás (FOUC) elleni védelem betöltéskor */
+.table-loading {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.table-ready {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* =========================================*/
+/* --- DASHBOARD KÁRTYÁK ÉS GRAFIKONOK --- */
+/* ========================================*/
+
+/* Kártya színezése - Normál állapot (kék) */
+.card-status-ok {
+    background: linear-gradient(135deg, #4e73df 10%, #224abe 100%);
+    color: white !important;
+    border: none;
+}
+
+/* Kártya színezése - Figyelmeztető állapot (mélyvörös) */
+.card-status-danger {
+    background: linear-gradient(135deg, #e55353 0%, #902e2e 100%);
+    color: white !important;
+    border: none;
+}
+
+/* Bal oldali színes szegélyek */
+.card-border-ok { border-left: 5px solid #1cc88a !important; }      /* Zöld - OK */
+.card-border-danger { border-left: 5px solid #c0392b !important; }  /* Vörös - Hiba */
+.card-border-ytd { border-left: 5px solid #6f42c1 !important; }     /* Lila - Éves összesítő */
+.card-border-return { border-left: 5px solid #e67e22 !important; }  /* Narancs - Visszáru */
+
+/* Egyedi szövegszínek a kártyákhoz */
+.text-danger-custom { color: #c0392b !important; }
+.text-ytd { color: #6f42c1 !important; }
+.text-return { color: #e67e22 !important; }
+
+/* Grafikon konténer beállításai */
+.chart-container-custom {
+    position: relative;
+    height: 50vh;
+    max-height: 450px;
+    width: 100%;
+}
+
+/* Görgethető lista (pl. Top hibák a dashboardon) */
+.scrollable-list {
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Egyedi, vékony görgetősáv a listákhoz (Webkit) */
+.scrollable-list::-webkit-scrollbar { width: 6px; }
+.scrollable-list::-webkit-scrollbar-track { background: #f8f9fa; }
+.scrollable-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.scrollable-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* =========================================*/
+/* RESPONZÍV MEGJELENÉS (MOBIL ÉS TABLET) */
+/* =========================================*/
+
+/* Nagy képernyők (Asztali nézet) */
+@media (min-width: 992px) {
+    #navbarSupportedContent>.d-flex {
+        align-items: center;
+    }
+}
+
+/* Mobil nézet finomhangolása */
+@media (max-width: 991.98px) {
+    #navbarSupportedContent .d-flex {
+        margin-top: 12px;
+    }
+}
+
 /* Mobil menü gomb stílusa */
 .mobile-menu-btn {
     font-size: 1.1rem;
@@ -209,172 +313,27 @@ body {
     color: #1e293b;
 }
 
-/* User info a sötét sávban */
-.user-text-main {
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
+/* ======================================*/
+/* SEGÉDOSZTÁLYOK ÉS FIX MÉRETŰ ELEMEK */
+/* =======================================*/
 
-.user-text-sub {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.75rem;
-}
+/* Ikon dobozok */
+.brand-icon-small { width: 32px; height: 32px; }
+.avatar-box-small { width: 38px; height: 38px; }
+.icon-box-large { width: 50px; height: 50px; }
+.icon-box-xlarge { width: 80px; height: 80px; }
 
-.user-avatar-box {
-    background-color: #fff;
-    color: var(--header-bg);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
+/* Szöveg méretezések és igazítások */
+.header-brand-icon { font-size: 18px; }
+.header-user-text-wrapper { line-height: 1.2; }
+.badge-custom-font { font-size: 0.85rem; }
+.forgot-password-icon { font-size: 2.5rem; }
 
-/* Dátum szöveg színe a sötét sávban */
-.header-date {
-    color: rgba(255, 255, 255, 0.8);
-    border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
+/* Törlést megerősítő információs dobozok maximális szélessége */
+.delete-info-box-small { max-width: 300px; }
+.delete-info-box-medium { max-width: 350px; }
 
-
-/* --- Dashboard Kártya Stílusok --- */
-
-/* 1. Normál állapot (DGA Kék) */
-.card-status-ok {
-    background: linear-gradient(135deg, #4e73df 10%, #224abe 100%);
-    color: white !important;
-    border: none;
-}
-
-/* 2. Figyelmeztető állapot (Elegáns Mélyvörös) */
-/* Nincs animáció, csak egy komolyabb színátmenet */
-.card-status-danger {
-    background: linear-gradient(135deg, #e55353 0%, #902e2e 100%);
-    color: white !important;
-    border: none;
-}
-
-/* 3. Költség kártya - Normál (Zöld csík) */
-.card-border-ok {
-    border-left: 5px solid #1cc88a !important;
-    /* Bootstrap success zöld */
-}
-
-/* 4. Költség kártya - Figyelmeztetés (Vörös csík) */
-.card-border-danger {
-    border-left: 5px solid #c0392b !important;
-    /* Sötétbordó szegély */
-}
-
-/* Szövegszín a fehér kártyán hiba esetén */
-.text-danger-custom {
-    color: #c0392b !important;
-}
-
-/* 3. Kártya - Éves költség (Elegáns Mélylila) */
-.card-border-ytd {
-    /* Egy szép, telt Bootstrap indigo szín */
-    border-left: 5px solid #6f42c1 !important;
-}
-
-.text-ytd {
-    color: #6f42c1 !important;
-}
-
-/* 4. Kártya - Visszaszállítás (Elegáns Narancs) */
-.card-border-return {
-    border-left: 5px solid #e67e22 !important;
-    /* Kellemes, sötétebb narancssárga */
-}
-
-.text-return {
-    color: #e67e22 !important;
-}
-
-/* --- Üzemegység lista görgetősávja --- */
-.scrollable-list {
-    max-height: 320px;
-    /* Megegyezik a grafikon fix magasságával */
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Egyedi, vékony görgetősáv (Webkit böngészőkhöz) */
-.scrollable-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.scrollable-list::-webkit-scrollbar-track {
-    background: #f8f9fa;
-    /* Nagyon halvány szürke háttér */
-}
-
-.scrollable-list::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    /* Finom szürkéskék csúszka */
-    border-radius: 4px;
-}
-
-.scrollable-list::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-    /* Sötétebb, ha ráviszi az egeret */
-}
-
-/* --- Extracted Inline Styles --- */
-
-/* Appended Classes */
-.brand-icon-small {
-    width: 32px;
-    height: 32px;
-}
-
-.header-brand-icon {
-    font-size: 18px;
-}
-
-.header-user-text-wrapper {
-    line-height: 1.2;
-}
-
-.avatar-box-small {
-    width: 38px;
-    height: 38px;
-}
-
+/* Toast (rendszerüzenet) értesítések mindig legfelül (z-index) */
 .toast-container-custom {
     z-index: 1100;
-}
-
-.icon-box-large {
-    width: 50px;
-    height: 50px;
-}
-
-.icon-box-xlarge {
-    width: 80px;
-    height: 80px;
-}
-
-.badge-custom-font {
-    font-size: 0.85rem;
-}
-
-.delete-info-box-small {
-    max-width: 300px;
-}
-
-.delete-info-box-medium {
-    max-width: 350px;
-}
-
-.forgot-password-icon {
-    font-size: 2.5rem;
-}
-
-.login-form-wrapper {
-    max-width: 420px;
-}
-
-.chart-container-custom {
-    position: relative;
-    height: 50vh;
-    max-height: 450px;
-    width: 100%;
 }

@@ -9,7 +9,7 @@ import base64
 # ----------------------------------------------------------------------
 
 def _get_serializer():
-    """Aláírt URL-token generátort ad vissza a SECRET_KEY alapján."""
+    """Aláírt URL-token a SECRET_KEY alapján."""
     return URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
 
 
@@ -58,7 +58,7 @@ def send_password_reset_email(user) -> bool:
         resend.Emails.send({
             "from": current_app.config['MAIL_FROM'],
             "to": user.email,
-            "subject": "Jelszó visszaállítása – Reklamációkezelő",
+            "subject": "Jelszó visszaállítása - Reklamációkezelő",
             "html": html_body,
         })
         return True
@@ -82,12 +82,12 @@ def send_report_email(to_email: str, pdf_buffer, filename: str, title_suffix: st
     pdf_buffer.seek(0)
     pdf_b64 = base64.b64encode(pdf_buffer.read()).decode('utf-8')
 
-    subject = f"Reklamációs riport – {title_suffix} ({date_range})"
+    subject = f"Reklamációs riport - {title_suffix} ({date_range})"
 
     html_body = f"""
     <html>
     <body style="font-family: Arial, sans-serif; color: #333;">
-        <h2 style="color: #0d6efd;">Reklamációkezelő – Riport</h2>
+        <h2 style="color: #0d6efd;">Reklamációkezelő - Riport</h2>
         <p>Csatolva találja a(z) <strong>{title_suffix}</strong> riportot a(z) <strong>{date_range}</strong> időszakra.</p>
         <p style="color: #888; font-size: 12px;">Ez egy automatikusan generált levél, kérjük ne válaszoljon rá.</p>
     </body>
