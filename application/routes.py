@@ -30,7 +30,7 @@ def home():
     current_year = now.year
     
     # --- Változók átadása a sablonnak ---
-    return render_template('dashboard.html', 
+    return render_template('main/dashboard.html', 
                          title='Áttekintés',
                          current_month_count=count,
                          current_month_cost=cost,
@@ -153,14 +153,14 @@ def register():
             db.session.rollback()
             app.logger.error(f"Adatbázis hiba regisztráció során: {e}")
             flash("Hiba történt a mentés során! (Adatbázis rollback lefutott)", "danger")
-            return render_template('register.html', title="Felhasználói fiók létrehozása", form=form), 500
+            return render_template('auth/register.html', title="Felhasználói fiók létrehozása", form=form), 500
         
     # --- Validációs hiba esetén 422-es Unprocessable Entity ---
     if request.method == 'POST':
-        return render_template("register.html", form=form, user=user), 422
+        return render_template("auth/register.html", title="Felhasználói fiók létrehozása", form=form), 422
 
     # --- Alapértelmezett GET ág ---     
-    return render_template('register.html', title="Felhasználói fiók létrehozása", form=form)
+    return render_template('auth/register.html', title="Felhasználói fiók létrehozása", form=form)
 
 
 # ----------------------------------------------------------------------
@@ -200,14 +200,14 @@ def login():
         else:
             # --- Sikertelen próbálkozás visszajelzése ---
             flash("Sikertelen bejelentkezés. Hibás e-mail cím vagy jelszó", 'danger')
-            return render_template('login.html', title='Bejelentkezés', form=form), 401
+            return render_template('auth/login.html', title='Bejelentkezés', form=form), 401
         
     # --- Validációs hiba esetén 422-es Unprocessable Entity ---
     if request.method == 'POST':
-        return render_template('login.html', title='Bejelentkezés', form=form), 422
+        return render_template('auth/login.html', title='Bejelentkezés', form=form), 422
     
     # --- Alapértelmezett GET ág ---
-    return render_template('login.html', title='Bejelentkezés', form=form)
+    return render_template('auth/login.html', title='Bejelentkezés', form=form)
 
 
 # ----------------------------------------------------------------------
@@ -227,7 +227,7 @@ def logout():
 @app.route('/account', methods=["GET", "POST"])
 @login_required
 def account():
-        return render_template('account.html', title='Felhasználói fiók')
+        return render_template('user/account.html', title='Felhasználói fiók')
 
 
 # ----------------------------------------------------------------------
@@ -239,7 +239,7 @@ def account():
 @roles_required('admin')
 def profiles():
     users = User.query.all()
-    return render_template('users.html', title='Felhasználók', users=users)
+    return render_template('user/users.html', title='Felhasználók', users=users)
 
 
 # ----------------------------------------------------------------------
@@ -272,19 +272,19 @@ def change_password():
                 db.session.rollback()
                 app.logger.error(f"Adatbázis hiba jelszómódosításnál (User ID: {current_user.id}): {e}")
                 flash('Hiba történt a jelszó mentése során! Kérjük, próbálja újra.', 'danger')
-                return render_template('change_password.html', form=form), 500
+                return render_template('auth/change_password.html', form=form), 500
         else:
             
             # --- Hibaüzenet hibás hitelesítés esetén (401 Unauthorized) ---
             flash('A megadott jelenlegi jelszó hibás.', 'danger')
-            return render_template('change_password.html', form=form), 401
+            return render_template('auth/change_password.html', form=form), 401
         
     # --- Validációs hiba esetén 422-es Unprocessable Entity ---
     if request.method == 'POST':
-        return render_template('change_password.html', form=form), 422
+        return render_template('auth/change_password.html', form=form), 422
 
     # --- Alapértelmezett GET ág ---
-    return render_template('change_password.html', form=form)
+    return render_template('auth/change_password.html', form=form)
 
 
 # ----------------------------------------------------------------------
@@ -334,7 +334,7 @@ def update_user(user_id):
             db.session.rollback()
             app.logger.error(f"Adatbázis hiba a felhasználó (ID: {user_id}) módosításakor: {e}")
             flash("Hiba történt a módosítás során! (Adatbázis rollback lefutott)", "danger")
-            return render_template("update_user.html", form=form, user=user), 500
+            return render_template("user/update_user.html", form=form, user=user), 500
 
     # --- Űrlap feltöltése az adatbázis adataival (GET) ---
     elif request.method == 'GET':
@@ -350,10 +350,10 @@ def update_user(user_id):
 
     # --- Validációs hiba esetén 422-es Unprocessable Entity ---
     if request.method == 'POST':
-        return render_template("update_user.html", form=form, user=user), 422
+        return render_template("user/update_user.html", form=form, user=user), 422
     
     # --- Alapértelmezett GET ág ---
-    return render_template("update_user.html", form=form, user=user)
+    return render_template("user/update_user.html", form=form, user=user)
 
 
 # ----------------------------------------------------------------------
@@ -386,7 +386,7 @@ def delete_account(user_id):
             return redirect(url_for('profiles'))
 
     # --- Alapértelmezett GET ág ---
-    return render_template('delete_account.html', form=form, user=user)
+    return render_template('user/delete_account.html', form=form, user=user)
 
 
 # ----------------------------------------------------------------------
@@ -462,14 +462,14 @@ def uj_reklamacio():
             db.session.rollback()
             app.logger.error(f"Hiba a reklamáció mentésekor: {e}")
             flash("Hiba történt az adatbázis mentése során. Kérjük, próbálja újra.", "danger")
-            return render_template('reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form), 500
+            return render_template('reklamacio/reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form), 500
 
     # --- Validációs hiba esetén 422-es Unprocessable Entity ---
     if request.method == 'POST':
-        return render_template('reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form), 422
+        return render_template('reklamacio/reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form), 422
 
     # --- Alapértelmezett GET ág ---
-    return render_template('reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form)
+    return render_template('reklamacio/reklamacio_uj.html', title='Új Reklamáció Rögzítése', form=form)
 
 
 # ----------------------------------------------------------------------
@@ -480,7 +480,7 @@ def uj_reklamacio():
 def reklamaciok():
     # --- Összes reklamációt csökkenő dátum szerint ---
     rekl = Reklamacio.query.order_by(Reklamacio.complaint_date.desc()).all()
-    return render_template('reklamaciok.html', title='Reklamációk', rekl=rekl)
+    return render_template('reklamacio/reklamaciok.html', title='Reklamációk', rekl=rekl)
 
 
 # ----------------------------------------------------------------------
@@ -529,8 +529,13 @@ def modosit_reklamacio(reklamacio_id):
         final_defect     = get_or_create_dynamic(DefectType, request.form.get('defect_type'))
         final_status     = get_or_create_dynamic(Status, request.form.get('status'))
 
-        # --- Állapotváltozás ellenőrzése ---
+        # --- Adatváltozások ellenőrzése ---
         status_changed = (reklamacio.status_id != final_status.id) if final_status else False
+        quantity_changed = (reklamacio.quantity != form.quantity.data)
+        requires_return_changed = (reklamacio.requires_return != form.requires_return.data)
+        cost_changed = (reklamacio.total_cost != form.total_cost.data)
+
+        any_important_change = status_changed or quantity_changed or requires_return_changed or cost_changed
 
         # --- Adatok frissítése az objektumban (UPDATE) ---
         reklamacio.complaint_date = form.complaint_date.data
@@ -553,9 +558,9 @@ def modosit_reklamacio(reklamacio_id):
         try:
             db.session.commit()
             
-            # --- E-mail értesítés csak státuszváltozás esetén ---
-            if status_changed:
-                send_reklamacio_notification_email("Módosított státuszú", reklamacio)
+            # --- E-mail értesítés ha fontos adat változott ---
+            if any_important_change:
+                send_reklamacio_notification_email("Módosított", reklamacio)
                 
             flash(f"A {reklamacio.complaint_number} számú reklamáció sikeresen frissítve!", "success")
             return redirect(url_for('reklamaciok'))
@@ -565,7 +570,7 @@ def modosit_reklamacio(reklamacio_id):
             db.session.rollback()
             app.logger.error(f"Hiba a(z) {reklamacio_id}. ID-jú reklamáció módosításakor: {e}")
             flash("Hiba történt a módosítás során! (Adatbázis rollback)", "danger")
-            return render_template("update_rekl.html", form=form, reklamacio=reklamacio), 500
+            return render_template("reklamacio/update_rekl.html", form=form, reklamacio=reklamacio), 500
 
     # --- Űrlap feltöltése az adatbázis adataival (GET) ---
     elif request.method == 'GET':
@@ -592,10 +597,10 @@ def modosit_reklamacio(reklamacio_id):
 
     # --- Validációs hiba esetén 422-es Unprocessable Entity ---
     if request.method == 'POST':
-        return render_template("update_rekl.html", form=form, reklamacio=reklamacio), 422
+        return render_template("reklamacio/update_rekl.html", form=form, reklamacio=reklamacio), 422
 
     # --- Alapértelmezett GET ág ---
-    return render_template("update_rekl.html", form=form, reklamacio=reklamacio)
+    return render_template("reklamacio/update_rekl.html", form=form, reklamacio=reklamacio)
 
 
 # ----------------------------------------------------------------------
@@ -623,7 +628,7 @@ def torol_reklamacio(reklamacio_id):
         flash(f"A {reklamacio.complaint_number} reklamáció törlésre került.", "success")
         return redirect(url_for('reklamaciok'))
 
-    return render_template('delete_rekl.html', form=form, reklamacio=reklamacio)
+    return render_template('reklamacio/delete_rekl.html', form=form, reklamacio=reklamacio)
 
 
 # ----------------------------------------------------------------------
@@ -739,7 +744,7 @@ def reports():
                     val = row[1] if row[1] is not None else 0
                     chart_values.append(float(val))
 
-    return render_template('reports.html', 
+    return render_template('main/reports.html', 
                            form=form, 
                            labels=chart_labels, 
                            values=chart_values, 
@@ -885,7 +890,6 @@ def forgot_password():
         user = User.query.filter_by(email=form.email.data).first()
 
         # --- E-mail küldés csak ha létezik a felhasználó ---
-        # --- (De mindig ugyanaz az üzenet → e-mail enumeration védelme) ---
         if user:
             success = send_password_reset_email(user)
             if not success:
@@ -894,7 +898,7 @@ def forgot_password():
         flash("Ha ez az e-mail cím regisztrált, hamarosan megérkezik a visszaállítási link.", "info")
         return redirect(url_for('login'))
 
-    return render_template('forgot_password.html', title='Elfelejtett jelszó', form=form)
+    return render_template('auth/forgot_password.html', title='Elfelejtett jelszó', form=form)
 
 
 # ----------------------------------------------------------------------
@@ -934,12 +938,12 @@ def reset_password(token):
             db.session.rollback()
             app.logger.error(f"Hiba jelszó visszaállításakor (user: {user.id}): {e}")
             flash("Hiba történt a jelszó mentése során. Kérjük, próbálja újra.", "danger")
-            return render_template('reset_password.html', form=form), 500
+            return render_template('auth/reset_password.html', form=form), 500
 
     if request.method == 'POST':
-        return render_template('reset_password.html', form=form), 422
+        return render_template('auth/reset_password.html', form=form), 422
 
-    return render_template('reset_password.html', title='Jelszó visszaállítása', form=form)
+    return render_template('auth/reset_password.html', title='Jelszó visszaállítása', form=form)
 
 
 # ----------------------------------------------------------------------
@@ -1010,8 +1014,27 @@ def send_report_email_route():
         return redirect(url_for('reports'))
 
     results = query.filter(Reklamacio.complaint_date.between(start, end)).all()
-    labels = [str(row[0]) if row[0] else "Nincs adat" for row in results]
-    values = [float(row[1]) if row[1] is not None else 0.0 for row in results]
+    labels = []
+    values = []
+
+    # --- Nulla-feltöltés a havi statisztikákhoz ---
+    if group_criterion in ['monthly_cost', 'monthly_count']:
+        result_dict = {str(row[0]): (float(row[1]) if row[1] is not None else 0) for row in results}
+        current_date = date(start.year, start.month, 1)
+        end_date_limit = date(end.year, end.month, 1)
+
+        while current_date <= end_date_limit:
+            month_str = current_date.strftime('%Y-%m')
+            labels.append(month_str)
+            values.append(result_dict.get(month_str, 0.0))
+
+            if current_date.month == 12:
+                current_date = date(current_date.year + 1, 1, 1)
+            else:
+                current_date = date(current_date.year, current_date.month + 1, 1)
+    else:
+        labels = [str(row[0]) if row[0] else "Nincs adat" for row in results]
+        values = [float(row[1]) if row[1] is not None else 0.0 for row in results]
 
     if not labels:
         flash("Nincs adat a megadott időszakban, a riport nem kerül elküldésre.", "warning")
