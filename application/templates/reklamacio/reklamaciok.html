@@ -4,22 +4,25 @@
 <!-- REKLAMÁCIÓK ÁTTEKINTÉSE -->
 <div class="row mt-4">
     <div class="col-12">
-        
+
         <!-- Tartalom kártya -->
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4">
 
                 <!-- Fejléc + Új reklamáció gomb -->
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                <div
+                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                     <h3 class="mb-0 fw-bold text-gray-800">Reklamációk listája</h3>
+                    {% if current_user.role.name == 'super_user' %}
                     <a href="{{ url_for('uj_reklamacio') }}" class="btn btn-primary shadow-sm">
                         <i class="bi bi-plus-lg me-2"></i> Új reklamáció felvétele
                     </a>
+                    {% endif %}
                 </div>
 
                 <!-- Reklamációk táblázata -->
-                <div class="table-responsive" style="overflow-x: hidden;"> 
-                    <table id="reklamaciokTable" class="table table-hover align-middle w-100" style="width:100%">
+                <div class="table-responsive" style="overflow-x: hidden;">
+                    <table id="reklamaciokTable" class="table table-hover align-middle w-100 table-loading" style="width:100%">
                         <thead class="table-light">
                             <tr>
 
@@ -31,8 +34,10 @@
                                 <th>Hiba</th>
                                 <th>Menny.</th>
                                 <th>Státusz</th>
+                                {% if current_user.role.name == 'super_user' %}
                                 <th class="text-end">Műveletek</th>
-                                
+                                {% endif %}
+
                                 <!-- Reszponzív nézetben lenyíló (rejtett) oszlopok -->
                                 <th class="none">Rekl. szám</th>
                                 <th class="none">Üzemegység</th>
@@ -53,46 +58,57 @@
                                 <td>
                                     <div class="d-flex flex-column" style="line-height: 1.2;">
                                         <span>{{ r.product.display_name }}</span>
-                                        <small class="text-muted" style="font-size: 0.75rem;">{{ r.product_identifier }}</small>
+                                        <small class="text-muted" style="font-size: 0.75rem;">{{ r.product_identifier
+                                            }}</small>
                                     </div>
                                 </td>
                                 <td>{{ r.defect_type.display_name }}</td>
                                 <td class="fw-bold">{{ r.quantity }}</td>
-                                
+
                                 <td>
                                     {% if r.status.name == 'folyamatban' %}
-                                        <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 0.85rem;">Folyamatban</span>
+                                    <span class="badge bg-warning text-dark px-2 py-1"
+                                        style="font-size: 0.85rem;">Folyamatban</span>
                                     {% elif r.status.name == 'elfogadva' %}
-                                        <span class="badge bg-success px-2 py-1" style="font-size: 0.85rem;">Elfogadva</span>
+                                    <span class="badge bg-success px-2 py-1"
+                                        style="font-size: 0.85rem;">Elfogadva</span>
                                     {% elif r.status.name == 'visszautasítva' %}
-                                        <span class="badge bg-danger px-2 py-1" style="font-size: 0.85rem;">Elutasítva</span>
+                                    <span class="badge bg-danger px-2 py-1"
+                                        style="font-size: 0.85rem;">Elutasítva</span>
                                     {% else %}
-                                        <span class="badge bg-secondary px-2 py-1" style="font-size: 0.85rem;">{{ r.status.name }}</span>
+                                    <span class="badge bg-secondary px-2 py-1" style="font-size: 0.85rem;">{{
+                                        r.status.name }}</span>
                                     {% endif %}
                                 </td>
 
                                 <!-- Műveleti gombok -->
+                                {% if current_user.role.name == 'super_user' %}
                                 <td class="text-end text-nowrap">
-                                    <a href="{{ url_for('modosit_reklamacio', reklamacio_id=r.id) }}" class="btn btn-sm btn-outline-primary shadow-sm" title="Módosítás">
+                                    <a href="{{ url_for('modosit_reklamacio', reklamacio_id=r.id) }}"
+                                        class="btn btn-sm btn-outline-primary shadow-sm" title="Módosítás">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="{{ url_for('torol_reklamacio', reklamacio_id=r.id) }}" class="btn btn-sm btn-outline-danger shadow-sm ms-1" title="Törlés">
+                                    <a href="{{ url_for('torol_reklamacio', reklamacio_id=r.id) }}"
+                                        class="btn btn-sm btn-outline-danger shadow-sm ms-1" title="Törlés">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
+                                {% endif %}
 
                                 <!-- Részletes (lenyíló) adatok -->
                                 <td>{{ r.complaint_number }}</td>
                                 <td>{{ r.department.display_name }}</td>
                                 <td>
                                     {% if r.requires_return %}
-                                        <span class="text-danger fw-bold"><i class="bi bi-check-circle-fill"></i> Igen</span>
+                                    <span class="text-danger fw-bold"><i class="bi bi-check-circle-fill"></i>
+                                        Igen</span>
                                     {% else %}
-                                        <span class="text-secondary"><i class="bi bi-x-circle"></i> Nem</span>
+                                    <span class="text-secondary"><i class="bi bi-x-circle"></i> Nem</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ r.shipping_date.strftime('%Y-%m-%d') if r.shipping_date else '-' }}</td>
-                                <td class="font-monospace fw-bold">{{ "{:,}".format(r.total_cost or 0).replace(",", " ") }} Ft</td>
+                                <td class="font-monospace fw-bold">{{ "{:,}".format(r.total_cost or 0).replace(",", " ")
+                                    }} Ft</td>
                                 <td>{{ r.user.surname }} {{ r.user.forename }}</td>
                             </tr>
                             {% endfor %}
@@ -109,35 +125,48 @@
 {% endblock content %}
 
 {% block scripts %}
-    {{ super() }}
+{{ super() }}
 
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function () {
 
-            // --- Reklamációk DataTable inicializálása ---
-            var table = $('#reklamaciokTable').DataTable({
-                responsive: true,
-                language: {
-                    url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/hu.json"
-                },
-                order: [[ 1, "desc" ]],
-                columnDefs: [
-                    { targets: 7, orderable: false, searchable: false },
-                    
-                    // --- Reszponzív prioritások ---
-                    { responsivePriority: 1, targets: 0 }, // ID mindig látszik
-                    { responsivePriority: 2, targets: -1 }, // Rejtett oszlopok (Részletek)
-                    { responsivePriority: 3, targets: 7 }, // Műveletek gombok
-                    
-                    // --- Rejtett oszlopok ---
-                    { targets: [8, 9, 10, 11, 12, 13], className: 'none' } 
-                ]
-            });
+        // --- Felhasználói jogosultság beállítása JS változóba ---
+        var isSuperUser = "{{ 'true' if current_user.role.name == 'super_user' else 'false' }}" === "true";
 
-            // --- Reszponzív újraszámolás ablak átméretezéskor ---
-            $(window).on('resize', function () {
-                table.columns.adjust().responsive.recalc();
-            });
+        var dtColumnDefs = [];
+        if (isSuperUser) {
+            dtColumnDefs = [
+                { targets: 7, orderable: false, searchable: false },
+                { responsivePriority: 1, targets: 0 }, // ID mindig látszik
+                { responsivePriority: 2, targets: -1 }, // Rejtett oszlopok (Részletek)
+                { responsivePriority: 3, targets: 7 }, // Műveletek gombok
+                { targets: [8, 9, 10, 11, 12, 13], className: 'none' }
+            ];
+        } else {
+            dtColumnDefs = [
+                { responsivePriority: 1, targets: 0 }, // ID mindig látszik
+                { responsivePriority: 2, targets: -1 }, // Rejtett oszlopok (Részletek)
+                { targets: [7, 8, 9, 10, 11, 12], className: 'none' }
+            ];
+        }
+
+        // --- Reklamációk DataTable inicializálása ---
+        var table = $('#reklamaciokTable').DataTable({
+            responsive: true,
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/hu.json"
+            },
+            order: [[1, "desc"]],
+            columnDefs: dtColumnDefs,
+            initComplete: function(settings, json) {
+                $('#reklamaciokTable').removeClass('table-loading').addClass('table-ready');
+            }
         });
-    </script>
+
+        // --- Reszponzív újraszámolás ablak átméretezéskor ---
+        $(window).on('resize', function () {
+            table.columns.adjust().responsive.recalc();
+        });
+    });
+</script>
 {% endblock scripts %}
