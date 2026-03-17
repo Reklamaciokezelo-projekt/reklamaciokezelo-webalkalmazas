@@ -122,6 +122,9 @@ def send_reklamacio_notification_email(action: str, reklamacio) -> bool:
     Értesítést küld egy reklamáció létrehozásáról, állapotváltozásáról vagy törléséről.
     Az értesítési címet a REKLAMACIOS_KOR_EMAIL konfig adja meg.
     """
+    if reklamacio.user and not reklamacio.user.is_active:
+        return False
+
     to_email = current_app.config.get('REKLAMACIOS_KOR_EMAIL')
     if not to_email:
         return False

@@ -17,6 +17,7 @@ from application.utils.email_service import generate_reset_token
 def test_forgot_password_get(client):
     """GET /forgot_password – 200-as választ ad és a form megjelenik."""
     response = client.get('/forgot_password')
+    print("HEADERS:", response.headers)
     assert response.status_code == 200
     assert 'Elfelejtett jelszó'.encode('utf-8') in response.data
 
