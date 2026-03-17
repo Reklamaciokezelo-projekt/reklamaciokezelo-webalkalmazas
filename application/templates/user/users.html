@@ -1,105 +1,124 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="row mt-4">
-        <div class="col-12">
+<div class="row mt-4">
+    <div class="col-12">
 
-            <!-- Tartalom kártya -->
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body p-4">
+        <!-- Tartalom kártya -->
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4">
 
-                    <!-- Fejléc + Új felhasználó gomb -->
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-                        <h3 class="mb-0 fw-bold text-gray-800">Regisztrált felhasználók</h3>
-                        <a href="{{ url_for('register') }}" class="btn btn-primary shadow-sm">
-                            <i class="bi bi-person-plus-fill me-2"></i>Új felhasználó hozzáadása
-                        </a>
+                <!-- Fejléc + Új felhasználó gomb -->
+                <div
+                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+                    <h3 class="mb-0 fw-bold text-gray-800">Regisztrált felhasználók</h3>
+                    <div class="btn-group" role="group" aria-label="Felhasználó állapot szűrő">
+                        <a href="{{ url_for('profiles', status='active') }}"
+                            class="btn fs-6 px-3 {% if status == 'active' %}btn-primary{% else %}btn-outline-primary{% endif %}">Aktív
+                            felhasználók</a>
+                        <a href="{{ url_for('profiles', status='inactive') }}"
+                            class="btn fs-6 px-3 {% if status == 'inactive' %}btn-primary{% else %}btn-outline-primary{% endif %}">Inaktív
+                            felhasználók</a>
                     </div>
-
-                    <!-- Felhasználók táblázata -->
-                    <table id="usersTable" class="table table-hover align-middle w-100" style="width:100%">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Név</th>
-                                <th>Beosztás</th>
-                                <th>Felhasználónév</th>
-                                <th>Email</th>
-                                <th>Jogosultság</th>
-                                <th class="text-end">Műveletek</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            <!-- Backendről érkező users lista bejárása -->
-                            {% for u in users %}
-                            <tr>
-                                <td class="fw-bold text-secondary">#{{ u.id }}</td>
-                                <td><span class="fw-medium">{{ u.surname }} {{ u.forename }}</span></td>
-                                
-                                <td>
-                                    <span class="badge bg-light text-secondary border border-secondary-subtle px-2 py-1" style="font-size: 0.85rem;">
-                                        {{ u.position.display_name }}
-                                    </span>
-                                </td>
-                                
-                                <td>{{ u.username }}</td>
-                                <td><a href="mailto:{{ u.email }}" class="text-decoration-none">{{ u.email }}</a></td>
-                                
-                                <td>
-                                    <span class="badge bg-secondary px-2 py-1" style="font-size: 0.85rem;">
-                                        {{ u.role.display_name }}
-                                    </span>
-                                </td>
-                                
-                                <!-- Admin műveletek -->
-                                <td class="text-end text-nowrap">
-                                    <a href="{{ url_for('update_user', user_id=u.id) }}" class="btn btn-sm btn-outline-primary shadow-sm" title="Módosítás">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <a href="{{ url_for('delete_account', user_id=u.id) }}" class="btn btn-sm btn-outline-danger shadow-sm ms-1" title="Törlés">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
+                    <a href="{{ url_for('register') }}" class="btn btn-primary shadow-sm">
+                        <i class="bi bi-person-plus-fill me-2"></i>Új felhasználó hozzáadása
+                    </a>
                 </div>
-            </div>
 
+                <!-- Felhasználók táblázata -->
+                <table id="usersTable" class="table table-hover align-middle w-100" style="width:100%">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Név</th>
+                            <th>Beosztás</th>
+                            <th>Felhasználónév</th>
+                            <th>Email</th>
+                            <th>Jogosultság</th>
+                            <th class="text-end">Műveletek</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- Backendről érkező users lista bejárása -->
+                        {% for u in users %}
+                        <tr>
+                            <td class="fw-bold text-secondary">#{{ u.id }}</td>
+                            <td><span class="fw-medium">{{ u.surname }} {{ u.forename }}</span></td>
+
+                            <td>
+                                <span class="badge bg-light text-secondary border border-secondary-subtle px-2 py-1"
+                                    style="font-size: 0.85rem;">
+                                    {{ u.position.display_name }}
+                                </span>
+                            </td>
+
+                            <td>{{ u.username }}</td>
+                            <td><a href="mailto:{{ u.email }}" class="text-decoration-none">{{ u.email }}</a></td>
+
+                            <td>
+                                <span class="badge bg-secondary px-2 py-1" style="font-size: 0.85rem;">
+                                    {{ u.role.display_name }}
+                                </span>
+                            </td>
+
+                            <!-- Admin műveletek -->
+                            <td class="text-end text-nowrap">
+                                <a href="{{ url_for('update_user', user_id=u.id) }}"
+                                    class="btn btn-sm btn-outline-primary shadow-sm" title="Módosítás">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                {% if u.is_active %}
+                                <a href="{{ url_for('deactivate_account', user_id=u.id) }}"
+                                    class="btn btn-sm btn-outline-danger shadow-sm ms-1" title="Deaktiválás">
+                                    <i class="bi bi-person-x"></i>
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('activate_account', user_id=u.id) }}"
+                                    class="btn btn-sm btn-outline-success shadow-sm ms-1" title="Aktiválás">
+                                    <i class="bi bi-person-check"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
         </div>
+
     </div>
+</div>
 {% endblock content %}
 
 {% block scripts %}
-    {{ super() }}
-    
-    <script>
-        $(document).ready(function() {
+{{ super() }}
 
-            // --- DataTable inicializálása ---
-            var table = $('#usersTable').DataTable({
-                responsive: true,
-                language: { 
-                    url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/hu.json" 
-                },
-                
-                // --- Alapértelmezett rendezés az ID alapján (a legújabb van legfelül) ---
-                order: [[0, 'desc']],
-                columnDefs: [
-                    { targets: -1, orderable: false, searchable: false },
-                    { responsivePriority: 1, targets: 1 }, // A név mindig látszódjon
-                    { responsivePriority: 2, targets: -1 } // A gombok  mindig látszódjanak
-                ]
-            });
+<script>
+    $(document).ready(function () {
 
-            // --- Reszponzív újraszámolás ablak átméretezéskor ---
-            $(window).on('resize', function () {
-                table.columns.adjust().responsive.recalc();
-            });
-        });    
-    </script>
+        // --- DataTable inicializálása ---
+        var table = $('#usersTable').DataTable({
+            responsive: true,
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/hu.json"
+            },
+
+            // --- Alapértelmezett rendezés az ID alapján (a legújabb van legfelül) ---
+            order: [[0, 'desc']],
+            columnDefs: [
+                { targets: -1, orderable: false, searchable: false },
+                { responsivePriority: 1, targets: 1 }, // A név mindig látszódjon
+                { responsivePriority: 2, targets: -1 } // A gombok  mindig látszódjanak
+            ]
+        });
+
+        // --- Reszponzív újraszámolás ablak átméretezéskor ---
+        $(window).on('resize', function () {
+            table.columns.adjust().responsive.recalc();
+        });
+    });    
+</script>
 {% endblock scripts %}
