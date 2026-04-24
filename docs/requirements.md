@@ -13,9 +13,9 @@ A rendszernek biztosítania kell az alábbi funkciókat:
 - **Bejelentkezés** - a felhasználó a regisztrált adataival be tud lépni.
 - **Felhasználói adatok módosítása** - az adminisztrátor tudja módosítani a felhasználók adatait.
 - **Felhasználói jelszó módosítása** - a bejelentkezett felhasználó tudja módosítani a jelszavát.
-- **Elfelejtett felhasználónév, vagy jelszó** - A felhasználó tudjon segítséget kérni bejelentkezési probléma esetén az adminisztrátoltól.
+- **Elfelejtett jelszó** - A felhasználó tudjon segítséget kérni bejelentkezési probléma esetén.
 - **Felhasználói fiók törlése** - az adminisztrátor tudja törölni a felhasználó fiókját.
-- **Adatkezelés** - a  bejelentkezett felhasználó tud adatokat rögzíteni, módosítani és törölni.  
+- **Adatkezelés** - a  bejelentkezett felhasználó tud reklamációkat rögzíteni, módosítani és törölni.  
 - **Keresés** - a felhasználó tudjon adatokat keresni különböző feltételek alapján.  
 - **Kimutatás készítés** - a felhasználó tudjon kimutatást készíteni a választott feltételek alapján.
 - **Exportálás** - lehessen exportálni kimutatásokat (PDF).

@@ -103,15 +103,17 @@
                     <ul class="nav nav-pills flex-column flex-md-row gap-2">
 
                         <!-- Áttekintés (Kezdőlap) menüpont -->
+                        {% if current_user.role.name in ['user', 'super_user', 'admin'] %}
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'home' }}"
                                 href="{{ url_for('home') }}">
                                 <i class="bi bi-house"></i> Áttekintés
                             </a>
                         </li>
+                        {% endif %}
 
                         <!-- Reklamációk menüpont -->
-                        {% if current_user.role.name in ['user', 'super_user'] %}
+                        {% if current_user.role.name in ['user', 'super_user', 'admin'] %}
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'reklamaciok' }}"
                                 href="{{ url_for('reklamaciok') }}">

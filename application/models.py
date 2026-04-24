@@ -41,6 +41,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
     surname = db.Column(db.String(50), nullable=False)
     forename = db.Column(db.String(50), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)

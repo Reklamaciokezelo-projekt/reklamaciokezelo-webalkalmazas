@@ -107,10 +107,18 @@ class ChangePasswordForm(FlaskForm):
 
 
 # ----------------------------------------------------------------------
-# FELHASZNÁLÓI FIÓK TÖRLÉSE (Admin)
+# FELHASZNÁLÓI FIÓK DEAKTIVÁLÁSA (Admin)
 # ----------------------------------------------------------------------
-class DeleteAccountForm(FlaskForm):
-    submit = SubmitField('Fiók törlése')
+class DeactivateAccountForm(FlaskForm):
+    submit = SubmitField('Fiók deaktiválása')
+    cancel = SubmitField('Mégse')
+
+
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI FIÓK AKTIVÁLÁSA (Admin)
+# ----------------------------------------------------------------------
+class ActivateAccountForm(FlaskForm):
+    submit = SubmitField('Fiók aktiválása')
     cancel = SubmitField('Mégse')
 
 

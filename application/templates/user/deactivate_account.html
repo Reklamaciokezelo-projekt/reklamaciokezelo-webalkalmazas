@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- FELHASZNÁLÓI FIÓK DEAKTIVÁLÁSA -->
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+
+        <!-- Tartalom kártya -->
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5 text-center">
+
+                <div
+                    class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex justify-content-center align-items-center mx-auto mb-4 icon-box-xlarge">
+                    <i class="bi bi-person-x-fill fs-1"></i>
+                </div>
+
+                <h3 class="mb-3 fw-bold text-gray-800">Fiók deaktiválása</h3>
+
+                <!-- Figyelmeztető szöveg -->
+                <p class="text-danger-emphasis fw-semibold mb-4 fs-5">
+                    Biztosan deaktiválni szeretnéd ezt a fiókot? <br>
+                    <span class="fw-normal fs-6">A felhasználó nem fog tudni bejelentkezni, de adatai megmaradnak, és
+                        később újraaktiválható.</span>
+                </p>
+
+                <!-- A deaktiválásra kijelölt felhasználói fiók (név) -->
+                <div class="bg-light border border-secondary-subtle rounded-3 p-3 mb-4 mx-auto delete-info-box-small">
+                    <span class="d-block fw-bold fs-5 text-dark">{{ user.surname }} {{ user.forename }}</span>
+                    <span class="text-muted small"><i class="bi bi-person me-1"></i>{{ user.username }}</span>
+                </div>
+
+                <!-- Folyamat indítása (POST) -->
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <!-- Műveleti gombok -->
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        {{ form.cancel(class="btn btn-outline-secondary px-4 fw-medium") }}
+                        {{ form.submit(class="btn btn-danger px-4 shadow-sm fw-medium") }}
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}

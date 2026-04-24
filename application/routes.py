@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, current_user, login_required, logout_user
 from application import app, db, bcrypt
 from application.models import User, Reklamacio, Department, Customer, Product, DefectType, Status, Role, Position
-from application.forms import NewUserForm, LoginForm, UpdateUserForm, DeleteAccountForm, ChangePasswordForm, NewReklamacioForm, UpdateReklamacioForm, DeleteReklamation, ReportFilterForm, ForgotPasswordForm, ResetPasswordForm, SendReportEmailForm
+from application.forms import NewUserForm, LoginForm, UpdateUserForm, DeactivateAccountForm, ActivateAccountForm, ChangePasswordForm, NewReklamacioForm, UpdateReklamacioForm, DeleteReklamation, ReportFilterForm, ForgotPasswordForm, ResetPasswordForm, SendReportEmailForm
 from application.utils.auth_role import roles_required
 from application.utils.helpers import get_or_create_dynamic, get_dashboard_stats, HONAPOK_TELJES
 from application.utils.email_service import send_password_reset_email, verify_reset_token, send_report_email, send_reklamacio_notification_email
@@ -195,6 +195,10 @@ def login():
 
         # --- Jelszó ellenőrzés és beléptetés ---
         if user and bcrypt.check_password_hash(user.password, form.password.data):
+            if not user.is_active:
+                flash("Ez a felhasználói fiók inaktív. Kérjük, lépjen kapcsolatba az adminisztrátorral.", 'danger')
+                return render_template('auth/login.html', title='Bejelentkezés', form=form), 401
+            
             login_user(user, remember=form.remember.data)
             return redirect(url_for('home'))
         else:
@@ -238,8 +242,12 @@ def account():
 @login_required
 @roles_required('admin')
 def profiles():
-    users = User.query.all()
-    return render_template('user/users.html', title='Felhasználók', users=users)
+    status = request.args.get('status', 'active')
+    if status == 'inactive':
+        users = User.query.filter_by(is_active=False).order_by(User.id.desc()).all()
+    else:
+        users = User.query.filter_by(is_active=True).order_by(User.id.desc()).all()
+    return render_template('user/users.html', title='Felhasználók', users=users, status=status)
 
 
 # ----------------------------------------------------------------------
@@ -357,15 +365,15 @@ def update_user(user_id):
 
 
 # ----------------------------------------------------------------------
-# FELHASZNÁLÓI FIÓK TÖRLÉSE (Admin)
+# FELHASZNÁLÓI FIÓK DEAKTIVÁLÁSA (Admin)
 # - user_id alapján
-# - A törlés végleges
+# - Soft delete: is_active = False
 # ----------------------------------------------------------------------
-@app.route("/delete_account/<int:user_id>", methods=["GET", "POST"])
+@app.route("/deactivate_account/<int:user_id>", methods=["GET", "POST"])
 @login_required
 @roles_required('admin')
-def delete_account(user_id):
-    form = DeleteAccountForm()
+def deactivate_account(user_id):
+    form = DeactivateAccountForm()
 
     # --- Felhasználó lekérése (ha nem létezik 404) ---
     user = User.query.get_or_404(user_id)
@@ -375,18 +383,51 @@ def delete_account(user_id):
         
         # --- Művelet megszakítása ---
         if form.cancel.data:
-            flash("A fiók törlése megszakítva.", "secondary")
+            flash("A fiók deaktiválása megszakítva.", "secondary")
             return redirect(url_for('profiles'))
         
-        # --- Törlés végrehajtása és mentés ---
+        # --- Deaktiválás végrehajtása és mentés ---
         if form.submit.data:
-            db.session.delete(user)
+            user.is_active = False
             db.session.commit()
-            flash("A fiók sikeresen törölve.", "info")
+            flash("A fiók sikeresen deaktiválva.", "danger")
             return redirect(url_for('profiles'))
 
     # --- Alapértelmezett GET ág ---
-    return render_template('user/delete_account.html', form=form, user=user)
+    return render_template('user/deactivate_account.html', form=form, user=user)
+
+
+# ----------------------------------------------------------------------
+# FELHASZNÁLÓI FIÓK AKTIVÁLÁSA (Admin)
+# - user_id alapján
+# - Soft delete visszavonása: is_active = True
+# ----------------------------------------------------------------------
+@app.route("/activate_account/<int:user_id>", methods=["GET", "POST"])
+@login_required
+@roles_required('admin')
+def activate_account(user_id):
+    form = ActivateAccountForm()
+
+    # --- Felhasználó lekérése (ha nem létezik 404) ---
+    user = User.query.get_or_404(user_id)
+
+    # --- Bejövő form adatok érvényesítése (POST) ---
+    if form.validate_on_submit():
+        
+        # --- Művelet megszakítása ---
+        if form.cancel.data:
+            flash("A fiók aktiválása megszakítva.", "secondary")
+            return redirect(url_for('profiles', status='inactive'))
+        
+        # --- Aktiválás végrehajtása és mentés ---
+        if form.submit.data:
+            user.is_active = True
+            db.session.commit()
+            flash("A fiók sikeresen aktiválva.", "success")
+            return redirect(url_for('profiles'))
+
+    # --- Alapértelmezett GET ág ---
+    return render_template('user/activate_account.html', form=form, user=user)
 
 
 # ----------------------------------------------------------------------
@@ -889,13 +930,13 @@ def forgot_password():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
 
-        # --- E-mail küldés csak ha létezik a felhasználó ---
-        if user:
+        # --- E-mail küldés csak ha létezik a felhasználó és aktív ---
+        if user and user.is_active:
             success = send_password_reset_email(user)
             if not success:
                 app.logger.warning(f"Jelszó-visszaállítási e-mail küldése sikertelen (user: {user.email})")
 
-        flash("Ha ez az e-mail cím regisztrált, hamarosan megérkezik a visszaállítási link.", "info")
+        flash("Ha ez az e-mail cím regisztrált és aktív, hamarosan megérkezik a visszaállítási link.", "info")
         return redirect(url_for('login'))
 
     return render_template('auth/forgot_password.html', title='Elfelejtett jelszó', form=form)
