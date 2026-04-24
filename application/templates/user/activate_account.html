@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!-- FELHASZNÁLÓI FIÓK TÖRLÉSE -->
+<!-- FELHASZNÁLÓI FIÓK AKTIVÁLÁSA -->
 <div class="row justify-content-center mt-4">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
 
@@ -10,36 +10,32 @@
             <div class="card-body p-4 p-md-5 text-center">
 
                 <div
-                    class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex justify-content-center align-items-center mx-auto mb-4 icon-box-xlarge">
-                    <i class="bi bi-exclamation-triangle-fill fs-1"></i>
+                    class="bg-success bg-opacity-10 text-success rounded-circle d-flex justify-content-center align-items-center mx-auto mb-4 icon-box-xlarge">
+                    <i class="bi bi-person-check-fill fs-1"></i>
                 </div>
 
-                <h3 class="mb-3 fw-bold text-gray-800">Fiók törlése</h3>
+                <h3 class="mb-3 fw-bold text-gray-800">Fiók aktiválása</h3>
 
                 <!-- Figyelmeztető szöveg -->
-                <p class="text-danger fw-semibold mb-4">
-                    Biztosan törölni szeretnéd ezt a fiókot? <br>
-                    <span class="fw-normal">Ez a művelet végleges és nem visszavonható!</span>
+                <p class="text-success-emphasis fw-semibold mb-4 fs-5">
+                    Biztosan újra aktiválni szeretnéd ezt a fiókot? <br>
+                    <span class="fw-normal fs-6">A felhasználó ismét be fog tudni jelentkezni a rendszerbe.</span>
                 </p>
 
-                <!-- A törlésre kijelölt felhasználói fiók (név) -->
+                <!-- Az aktiválásra kijelölt felhasználói fiók (név) -->
                 <div class="bg-light border border-secondary-subtle rounded-3 p-3 mb-4 mx-auto delete-info-box-small">
                     <span class="d-block fw-bold fs-5 text-dark">{{ user.surname }} {{ user.forename }}</span>
                     <span class="text-muted small"><i class="bi bi-person me-1"></i>{{ user.username }}</span>
                 </div>
 
-                <!-- Törlési folyamat indítása (POST) -->
+                <!-- Folyamat indítása (POST) -->
                 <form method="POST">
                     {{ form.hidden_tag() }}
 
                     <!-- Műveleti gombok -->
                     <div class="d-flex justify-content-center gap-3 mt-4">
-                        <a href="{{ url_for('profiles') }}" class="btn btn-outline-secondary px-4 fw-medium">
-                            Mégse
-                        </a>
-                        <button type="submit" class="btn btn-danger px-4 shadow-sm fw-medium">
-                            <i class="bi bi-trash3-fill me-1"></i> Törlés
-                        </button>
+                        {{ form.cancel(class="btn btn-outline-secondary px-4 fw-medium") }}
+                        {{ form.submit(class="btn btn-success px-4 shadow-sm fw-medium") }}
                     </div>
                 </form>
 
