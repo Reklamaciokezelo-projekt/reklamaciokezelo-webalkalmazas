@@ -102,7 +102,7 @@ class ChangePasswordForm(FlaskForm):
         Length(min=6, message="A jelszónak legalább 6 karakter hosszúnak kell lennie."),
         Regexp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$', message="A jelszónak tartalmaznia kell kisbetűt, nagybetűt és számot.")
     ])
-    confirm_password = PasswordField('Új jelszó megerősítése', validators=[DataRequired(), EqualTo('new_password')])
+    confirm_password = PasswordField('Új jelszó megerősítése', validators=[DataRequired(), EqualTo('new_password', message="A két jelszó nem egyezik meg.")])
     submit = SubmitField('Mentés')
 
 

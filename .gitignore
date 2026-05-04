@@ -56,3 +56,4 @@ Thumbs.db
 
 # App secrets / config
 .env
+docker.env

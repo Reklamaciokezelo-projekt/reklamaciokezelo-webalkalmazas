@@ -113,7 +113,7 @@
                         {% endif %}
 
                         <!-- Reklamációk menüpont -->
-                        {% if current_user.role.name in ['user', 'super_user', 'admin'] %}
+                        {% if current_user.role.name in ['user', 'super_user'] %}
                         <li class="nav-item">
                             <a class="nav-link {{ 'active' if request.endpoint == 'reklamaciok' }}"
                                 href="{{ url_for('reklamaciok') }}">
