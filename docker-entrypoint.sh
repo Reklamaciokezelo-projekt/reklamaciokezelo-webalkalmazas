@@ -1,4 +1,5 @@
 #!/bin/sh
+# --- A webalkalmazás konténerének indítását vezérlő szkript (Entrypoint). ---
 set -e
 cd /app
 if [ "$#" -gt 0 ]; then
