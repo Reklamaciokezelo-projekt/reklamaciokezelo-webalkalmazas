@@ -1,0 +1,25 @@
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    FLASK_APP=application
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY config.py ./
+COPY application ./application
+COPY migrations ./migrations
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+RUN useradd --create-home --uid 1000 appuser \
+    && chown -R appuser:appuser /app \
+    && chown appuser:appuser /docker-entrypoint.sh
+USER appuser
+
+EXPOSE 8000
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

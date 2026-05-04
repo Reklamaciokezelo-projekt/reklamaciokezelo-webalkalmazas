@@ -112,13 +112,108 @@ def upgrade():
     from application import bcrypt
     hashed_pw = bcrypt.generate_password_hash('123456').decode('utf-8')
     
-    op.execute("INSERT INTO roles (name, display_name) VALUES ('admin', 'Adminisztrátor')")
-    op.execute("INSERT INTO positions (name, display_name) VALUES ('admin', 'Adminisztrátor')")
+    op.execute("""
+        INSERT INTO customers (name, display_name) VALUES 
+        ('hbm', 'HBM'),
+        ('igm', 'IGM'),
+        ('kone', 'KONE'),
+        ('lbh', 'LBH'),
+        ('lec', 'LEC'),
+        ('prinoth', 'PRINOTH'),
+        ('lfr', 'LFR')
+    """)
+
+    op.execute("""
+        INSERT INTO defect_types (name, display_name) VALUES 
+        ('beszállítóihiba', 'beszállítói hiba'),
+        ('egyengetésihiba', 'egyengetési hiba'),
+        ('festésihiba', 'festési hiba'),
+        ('forgácsolásihiba', 'forgácsolási hiba'),
+        ('menetelésihiba', 'menetelési hiba'),
+        ('mérethiba', 'méret hiba'),
+        ('mosásihiba', 'mosási hiba'),
+        ('összeállításihiba', 'összeállítási hiba'),
+        ('szállításisérülés', 'szállítási sérülés'),
+        ('szerelésihiba', 'szerelési hiba'),
+        ('tisztításihiba', 'tisztítási hiba'),
+        ('hegesztésihiba', 'hegesztési hiba'),
+        ('tömítetlenvarrat', 'tömítetlen varrat'),
+        ('rozsdás', 'rozsdás'),
+        ('hibasszereles', 'hibás szerelés'),
+        ('lyukastartaly', 'lyukas tartály'),
+        ('hibasgyartmanykisero', 'hibás gyártmánykísérő')
+    """)
+
+    op.execute("""
+        INSERT INTO departments (name, display_name) VALUES 
+        ('adminisztráció', 'adminisztráció'),
+        ('alkatrészgyártó', 'alkatrészgyártó'),
+        ('beszállító', 'beszállító'),
+        ('kisműhely', 'kisműhely'),
+        ('nagyműhely', 'nagyműhely'),
+        ('nyomáspróba', 'nyomáspróba'),
+        ('raktár', 'raktár'),
+        ('szállítás', 'szállítás'),
+        ('szerelés', 'szerelés'),
+        ('csomagoló', 'csomagoló'),
+        ('mosó', 'mosó'),
+        ('festőüzem', 'festőüzem')
+    """)
+
+    op.execute("""
+        INSERT INTO positions (name, display_name) VALUES 
+        ('ugyvezetoigazgato', 'ügyvezető igazgató'),
+        ('segedoperator', 'segéd operátor'),
+        ('hegesztesivezeto', 'hegesztési vezető'),
+        ('hegesztesitechnologus', 'hegesztési technológus'),
+        ('operator', 'operátor'),
+        ('minosegellenor', 'minőségellenőr'),
+        ('technologus', 'technológus'),
+        ('uzemvezeto', 'üzemvezető'),
+        ('telephelyvezeto', 'telephelyvezető'),
+        ('adminisztrator', 'adminisztrátor'),
+        ('karbantarto', 'karbantartó'),
+        ('villanyszerelo', 'villanyszerelő'),
+        ('segedtechnologus', 'segéd technológus')
+    """)
+
+    op.execute("""
+        INSERT INTO products (name, display_name) VALUES 
+        ('bodenplatte', 'bodenplatte'),
+        ('console', 'console'),
+        ('dieseltank', 'dieseltank'),
+        ('oiltank', 'oiltank'),
+        ('hydrauliktank', 'hydrauliktank'),
+        ('kabinenbodenplatte', 'kabinenbodenplatte'),
+        ('kabinenpodest', 'kabinenpodest'),
+        ('kasten', 'kasten'),
+        ('kraftstofftank', 'kraftstofftank'),
+        ('kühlerkasten', 'kühlerkasten'),
+        ('wasserkühlerkasten', 'wasserkühlerkasten'),
+        ('kabinenkasten', 'kabinenkasten'),
+        ('gehause', 'gehause'),
+        ('bisoftank', 'bisoftank')
+    """)
+
+    op.execute("""
+        INSERT INTO roles (name, display_name) VALUES 
+        ('admin', 'Adminisztrátor'),
+        ('user', 'Alap felhasználó'),
+        ('super_user', 'Haladó felhasználó')
+    """)
+
+    op.execute("""
+        INSERT INTO statuses (name, display_name) VALUES 
+        ('folyamatban', 'folyamatban'),
+        ('elfogadva', 'elfogadva'),
+        ('visszautasitva', 'visszautasítva')
+    """)
+
     op.execute(
         f"INSERT INTO users (is_active, surname, forename, username, email, password, role_id, position_id) "
         f"VALUES (true, 'Admin', 'Felhasználó', 'admin', 'admin@admin.com', '{hashed_pw}', "
         f"(SELECT id FROM roles WHERE name='admin'), "
-        f"(SELECT id FROM positions WHERE name='admin'))"
+        f"(SELECT id FROM positions WHERE name='adminisztrator'))"
     )
 
     # ### end Alembic commands ###
