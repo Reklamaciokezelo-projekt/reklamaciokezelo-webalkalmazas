@@ -8,7 +8,6 @@ __pycache__
 .env.*
 !.env.example
 docker.env
-!docker.env.example
 tests/
 docs/
 diff.txt
