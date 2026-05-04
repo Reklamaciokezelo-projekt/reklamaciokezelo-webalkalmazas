@@ -1085,13 +1085,13 @@ def send_report_email_route():
     pdf_buffer = generate_report_pdf(labels, values, title_suffix, chart_type, False)
 
     # --- Küldés e-mailben ---
-    date_range = f"{start.strftime('%Y.%m.%d')} – {end.strftime('%Y.%m.%d')}"
+    date_range = f"{start.strftime('%Y.%m.%d')} - {end.strftime('%Y.%m.%d')}"
     filename = f"riport_{group_criterion}_{date.today()}.pdf"
     success = send_report_email(recipient, pdf_buffer, filename, title_suffix, date_range)
 
     if success:
         flash(f"A riport sikeresen elküldve: {recipient}", "success")
     else:
-        flash("A riport generálva, de az e-mail küldése sikertelen. Ellenőrizze a szerver naplót.", "danger")
+        flash("A riport e-mail küldése sikertelen.", "danger")
 
     return redirect(url_for('reports'))

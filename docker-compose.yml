@@ -1,0 +1,78 @@
+# A Reklamációkezelő webalkalmazás Docker Compose konfigurációja (PostgreSQL + Gunicorn).
+# Futtatásához Docker Compose 2.24 vagy újabb verzió szükséges.
+#
+# --- Architektúra és platformfüggetlenség ---
+# A konfiguráció kifejezetten úgy lett kialakítva, hogy kiküszöbölje a Windows platformra jellemző 
+# bind-mount anomáliákat (pl. fájlok helyett üres könyvtárak létrejötte, környezeti változó beolvasási hibák).
+# A rendszer egy dedikált 'docker.env' fájlt használ, melyet az 'init-env' szolgáltatás generál.
+# A konténerek (db, web) futásidőben, a csatolt kötetből (read-only) olvassák be ezeket az értékeket.
+
+services:
+  init-env:
+    image: alpine:3.20
+    working_dir: /work
+    volumes:
+      - .:/work
+    command: ["sh", "-c", "apk add --no-cache openssl >/dev/null && exec sh /work/scripts/docker-init-env.sh"]
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: reklamacio_kezelo
+      POSTGRES_DB: reklamaciokezelo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - .:/project:ro
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql:ro
+    depends_on:
+      init-env:
+        condition: service_completed_successfully
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        if [ ! -f /project/docker.env ]; then
+          echo "db: HIBA: A /project/docker.env fájl nem található. Lehetséges ok: a projekt gyökérkönyvtára nincs csatolva, vagy az init-env nem hozta létre." >&2
+          exit 1
+        fi
+        # Windows specifikus probléma kezelése: a CRLF sortörések eltávolítása beolvasás előtt,
+        # ellenkező esetben a POSIX 'source' parancs hibát dobhat. A '$$' egyetlen '$' jelet reprezentál.
+        _envf="/tmp/docker.env.$$$$"
+        sed 's/\r$$//' /project/docker.env > "$$_envf"
+        set -a
+        . "$$_envf"
+        set +a
+        rm -f "$$_envf"
+        if [ -z "$${POSTGRES_PASSWORD:-}" ] && [ -n "$${DATABASE_URL:-}" ]; then
+          POSTGRES_PASSWORD=$$(printf '%s' "$$DATABASE_URL" | sed -e 's|^postgresql://||' -e 's|^postgres://||' -e 's|^[^:]*:||' -e 's|@.*||')
+          export POSTGRES_PASSWORD
+        fi
+        if [ -z "$${POSTGRES_PASSWORD:-}" ]; then
+          echo "db: HIBA: A POSTGRES_PASSWORD változó üres a /project/docker.env beolvasása után. Ellenőrizd a konfigurációt, vagy lásd a README Újratelepítés fejezetét." >&2
+          exit 1
+        fi
+        exec docker-entrypoint.sh postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reklamacio_kezelo -d reklamaciokezelo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    environment:
+      FLASK_APP: application
+    volumes:
+      - .:/project:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
